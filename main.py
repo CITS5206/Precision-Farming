@@ -1,9 +1,12 @@
 from tkinter import *
 from tkinter import messagebox
-import tkinter
 import serial
 import sys
 import glob
+import webbrowser
+
+import http.server
+import socketserver
 
 
 window = Tk()
@@ -17,7 +20,20 @@ lbl2.grid(column=0, row=0)
 
 def server():
     try:
-        exec(open('hello.py').read())
+
+        PORT = 8080
+        Handler = http.server.SimpleHTTPRequestHandler
+        
+
+        with socketserver.TCPServer(("", PORT), Handler) as httpd:
+            print("serving at port", PORT)
+            httpd.serve_forever()
+            webbrowser.open('http://localhost:8080/')  # Go to web server 
+            
+        
+        
+
+        # exec(open('hello.py').read())   # To access another python file 
     except:
         
         messagebox.showerror("showerror", "Error")
