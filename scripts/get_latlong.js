@@ -5,15 +5,20 @@ var get_latlong = function () {
         async: true,
         cache: false,
 
-        }).then(function (response) {
+        success: function (response) {
             
-            var1 = response
+            var1 = response;
             text_var1 = JSON.stringify(var1);
+            $(".display_latlong").html(text_var1);
             console.log(var1);
-        });
+        },
+        error: function(xhr, status, error){
+            var errorMessage = xhr.status + ': ' + xhr.statusText;
+            $(".display_latlong").html('Error - ' + errorMessage)
+        }
     
-    };
-
+    });
+};
 // var ajax_call = function () {
 //     $.ajax({
 //         url: "ajax.json",
@@ -31,12 +36,9 @@ var get_latlong = function () {
 //     };
 
 
-var display_latlong = function () {
-    $(".display_latlong").html(text_var1);
-};
+// var display_latlong = function () {
+//     $(".display_latlong").html(text_var1);
+// };
 
-setInterval( function () {
-    get_latlong();
-    display_latlong();
- }, 2000);
+setInterval(get_latlong, 2000);
 
