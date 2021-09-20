@@ -4,7 +4,7 @@ import serial
 import sys
 import glob
 import webbrowser
-
+from threading import Thread
 
 import threading
 import http.server
@@ -19,46 +19,62 @@ window.geometry('800x400')
 lbl2 = Label(window, text="Scan Senor")
 lbl2.grid(column=0, row=0)
 
-class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    pass
+web_server_status = False 
 
-class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
+# class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+#     pass
+
+# class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     
-    def handle(self):
-        data = str(self.request.recv(1024), 'ascii')
-        cur_thread = threading.current_thread()
-        response = bytes("{}: {}".format(cur_thread.name, data), 'ascii')
-        self.request.sendall(response)
+#     def handle(self):
+#         data = str(self.request.recv(1024), 'ascii')
+#         cur_thread = threading.current_thread()
+#         response = bytes("{}: {}".format(cur_thread.name, data), 'ascii')
+#         self.request.sendall(response)
 
 def server():
     try:
 
 
-        HOST, PORT = "localhost", 8080
-        server = ThreadedTCPServer((HOST, PORT), ThreadedTCPRequestHandler)
+        # HOST, PORT = "localhost", 8080
+        # server = ThreadedTCPServer((HOST, PORT), ThreadedTCPRequestHandler)
 
-        with server:
-            ip, port = server.server_address
+        # with server:
+        #     ip, port = server.server_address
 
        
-            server_thread = threading.Thread(target=server.serve_forever)
-            server_thread.daemon = True
-            server_thread.start()
-            print("Server loop running in thread:", server_thread.name)
+        #     server_thread = threading.Thread(target=server.serve_forever)
+        #     server_thread.daemon = True
+        #     server_thread.start()
+        #     print("Server loop running in thread:", server_thread.name)
 
 
-        # PORT = 8080
-        # Handler = http.server.SimpleHTTPRequestHandler
+        PORT = 8080
+        Handler = http.server.SimpleHTTPRequestHandler
         
 
-        # with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        #     print("serving at port", PORT)
-        #     httpd.serve_forever()
-           # print(1)
-            webbrowser.open('http://localhost:8080/')  # Go to web server 
+        with socketserver.TCPServer(("", PORT), Handler) as httpd:
+            #print("serving at port", PORT)
+            
+            httpd.serve_forever()
+
+           
+           # webbrowser.open('http://localhost:8080/')  # Go to web server 
             #exec(open('server.py').read())   # To access another python file 
     except:
-        
+        pass
+        #messagebox.showerror("showerror", "Error")
+
+
+def openWebsite():
+    try:
+       
+        webbrowser.open('http://localhost:8080/') 
+       
+
+
+
+    except:
         messagebox.showerror("showerror", "Error")
 
 
@@ -101,12 +117,15 @@ btn = Button(window, text="Default Ports", command=serial_ports)
 btn2 = Button(window, text="Rescan", command=serial_ports)
 mainrun = Button(window, text="Start MainProgram", command=mainprogram)
 
-Start_server = Button(window, text="Start Server", command=server)
+Start_server = Button(window, text="Start Server", command=Thread(target=server, daemon=True).start())
+Open_Application= Button(window, text="Open Application", command=openWebsite)
+
 
 btn.grid(column=1, row=0)
 btn2.grid(column=2, row=0)
 mainrun.grid(column = 3, row=0)
 Start_server.grid(column = 4, row=0)
+Open_Application.grid(column = 5, row=0)
 
 
 
