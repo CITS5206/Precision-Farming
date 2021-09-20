@@ -5,6 +5,8 @@ import sys
 import glob
 import webbrowser
 
+
+import threading
 import http.server
 import socketserver
 
@@ -17,23 +19,44 @@ window.geometry('800x400')
 lbl2 = Label(window, text="Scan Senor")
 lbl2.grid(column=0, row=0)
 
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
+
+class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
+    
+    def handle(self):
+        data = str(self.request.recv(1024), 'ascii')
+        cur_thread = threading.current_thread()
+        response = bytes("{}: {}".format(cur_thread.name, data), 'ascii')
+        self.request.sendall(response)
 
 def server():
     try:
 
-        PORT = 8080
-        Handler = http.server.SimpleHTTPRequestHandler
+
+        HOST, PORT = "localhost", 8080
+        server = ThreadedTCPServer((HOST, PORT), ThreadedTCPRequestHandler)
+
+        with server:
+            ip, port = server.server_address
+
+       
+            server_thread = threading.Thread(target=server.serve_forever)
+            server_thread.daemon = True
+            server_thread.start()
+            print("Server loop running in thread:", server_thread.name)
+
+
+        # PORT = 8080
+        # Handler = http.server.SimpleHTTPRequestHandler
         
 
-        with socketserver.TCPServer(("", PORT), Handler) as httpd:
-            print("serving at port", PORT)
-            httpd.serve_forever()
+        # with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        #     print("serving at port", PORT)
+        #     httpd.serve_forever()
+           # print(1)
             webbrowser.open('http://localhost:8080/')  # Go to web server 
-            
-        
-        
-
-        # exec(open('hello.py').read())   # To access another python file 
+            #exec(open('server.py').read())   # To access another python file 
     except:
         
         messagebox.showerror("showerror", "Error")
