@@ -1,0 +1,68 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.upper-wrap,
+.bottom-wrap {
+    background-color: #7C7574;
+    display: flex;
+    justify-content: space-around;
+    color: #fff;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    padding: .5em;
+}
+
+.upper-wrap {
+    top: 0;
+}
+
+.bottom-wrap {
+    bottom: 0;
+}
+
+.device {
+    display: flex;
+    flex-direction: row;
+}
+
+.device-name {
+    margin-left:.5em ;
+}
+
+.device-status-shape {
+    margin: 0.1em;
+    height: 15px;
+    width: 15px;
+    background-color: greenyellow;
+    border-radius: 50%;
+}
+
+.buttons {
+    list-style: none;
+    text-decoration: none;
+    display: flex;
+    flex-direction: row;
+}
+
+.buttons li {
+    display: inline;
+    padding: 0 1em;
+}
+
+.buttons li a {
+    text-decoration: none;
+    color: #fff;
+    background-color: #4E5DE8;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 120px;
+    height: 50px;
+}

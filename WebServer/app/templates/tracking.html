@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="content">
+        <div class="upper-wrap">
+            <div class="devices">
+                <!-- TODO: func: python - device-status -->
+                <!-- TODO: func: js - device-status-shape change color -->
+                <div class="device">
+                    <div class="device-status-shape"></div>
+                    <p class="device-name">Sensor</p>
+                </div>
+                <div class="device">
+                    <div class="device-status-shape"></div>
+                    <p class="device-name">GPS</p>
+                </div>
+            </div>
+            
+            <div class="ABpoint">
+                <!-- TODO: func: get A, B coordinate -->
+                <p class="point-coordinate">A: -40.678901, 163.8765432 </p>
+                <p class="point-coordinate">B: -40.678901, 163.8765432</p>
+            </div>
+            <div class="current-location">
+                <!-- TODO: func: python - get current-location -->
+                <p>Current Location</p>
+                <p>-40.678901, 163.8765432</p>
+            </div>
+        </div>
+        <div class="bottom-wrap">
+            <ul class="buttons">
+                <li>
+                    <!-- TODO: func: js read json, draw lines and current location -->
+                    <a href="#" class="btn" id="btn-track" onclick="tracking()">Start Tracking</a>
+                </li>
+                <li>
+                    <a href="list.html" class="btn">History</a>
+                </li>
+                <li>
+                    <a href="home.html" class="btn">Home</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script src="../static/app.js"></script>
+</body>
+</html>
