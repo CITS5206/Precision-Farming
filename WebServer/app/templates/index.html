@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static',filename='leaflet-1.7.1/leaflet.css') }}"/>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="{{ url_for('static',filename='leaflet-1.7.1/leaflet.js') }}"></script>
+    <script type='text/javascript' src="{{ url_for('static',filename='jquery/jquery-3.6.0.js') }}"></script>
+        
+</head>
+<body>
+    <h1>Leaflet Example</h1>
+    
+    <p>Here's a map </p>
+    
+    <div id="map" style="height: 440px; border: 1px solid #AAA;"></div>
+
+</body>
+<script type='text/javascript' src="{{ url_for('static',filename='scripts/getjson2.js') }}"></script>
+<script type='text/javascript' src="{{ url_for('static',filename='scripts/map2.js') }}"></script>
+</html>
