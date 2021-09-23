@@ -11,10 +11,10 @@ datetoday=str(datetime.date.today())
 
 # Only works for the lasted txt file in the same day
 
-sensortextpath='./Data_Reader/Textfile/Dualemdata'+datetoday+'.txt'
-gpstextpath='./Data_Reader/Textfile/GPSdata'+datetoday+'.txt'
+sensortextpath='./Archive/Code/Data_Reader/Textfile/Dualemdata'+datetoday+'.txt'
+gpstextpath='./Archive/Code/Data_Reader/Textfile/GPSdata'+datetoday+'.txt'
 
-csvpath= './Data_Reader/CSVfile/'
+csvpath= './Archive/Code/Data_Reader/CSVfile/'
 
 class creatCSVfile:
 
@@ -82,13 +82,7 @@ class creatCSVfile:
             for j in data_list[i]:
                 new_list.append(j)
             final_list.append(new_list)
-    
-                
 
-       # print(final_list[0])
-        
-
-        
 
 
 

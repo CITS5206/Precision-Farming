@@ -19,8 +19,6 @@ GPSfullpath=path+file_name_gps+".txt"
 
 
 
-# Only works for the lasted txt file in the same day
-
 
 class readSensor: 
 
