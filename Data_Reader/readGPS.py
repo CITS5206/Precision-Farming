@@ -3,7 +3,7 @@ import serial
 import time
 import os.path
 import datetime
-
+import csv
 
 filename="./Data Reader/Textfile/GPSlog"+str(datetime.date.today())+".txt";
 
@@ -36,7 +36,8 @@ class readGPSData:
                         # ****** Need to check if file exists or not
 
                         with open('gps_data.txt','a') as outfile:
-                            outfile.write(  line.strip()+"\n"
+                            
+                            outfile.csv.write( line.strip()+"\n"
                                             + "{} {} {} ".format(nmeaobj.latitude,nmeaobj.longitude, nmeaobj.timestamp)
                                             + "\n")
                                 

@@ -68,9 +68,7 @@ class readDualemSensor:
 
 
 
-temp =  readDualemSensor()
 
-temp.check_file_exist()
 
 
     

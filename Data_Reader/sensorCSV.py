@@ -6,13 +6,14 @@ import re
 
 
 datetoday=str(datetime.date.today())
+print(datetoday)
 
 # Only works for the lasted txt file in the same day
 
-sensortextpath='./Data Reader/Textfile/SENSORlog'+datetoday+'.txt'
-gpstextpath='./Data Reader/Textfile/GPSlog'+datetoday+'.txt'
+sensortextpath='./Data_Reader/Textfile/Dualemdata'+datetoday+'.txt'
+gpstextpath='./Data_Reader/Textfile/GPSdata'+datetoday+'.txt'
 
-csvpath= './Data Reader/CSVfile/'
+csvpath= './Data_Reader/CSVfile/'
 
 class creatCSVfile:
 
