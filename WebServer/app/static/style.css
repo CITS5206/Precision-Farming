@@ -78,7 +78,8 @@
     padding: 0 1em;
 }
 
-.buttons li a {
+.buttons li a,
+.btn-intable {
     text-decoration: none;
     color: #fff;
     background-color: #4E5DE8;
@@ -87,6 +88,44 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto;
+}
+
+.buttons li a {
     width: 120px;
     height: 50px;
+}
+
+.btn-intable {
+    width: 60px;
+    height: 25px;
+}
+
+/* Map History */
+table {
+    margin-left: auto;
+    margin-right: auto;
+  
+    border-collapse: collapse;
+    
+}
+table.list{
+width: 50%;
+
+}
+td.list, th.list {
+border: 1px solid #ddd;
+padding: 8px;
+}
+
+tr.list:nth-child(even){background: #EEEEEE;}
+
+
+tr.list:hover {background-color: #ddd;}
+
+th.list {
+padding-top: 12px;
+padding-bottom: 12px;
+text-align: left;
+background-color: #4E5DE8;
+color: white;
 }

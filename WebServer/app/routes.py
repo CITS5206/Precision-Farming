@@ -1,7 +1,7 @@
-from app    import app
-from flask  import render_template
+from app        import app, db
+from flask      import render_template
+from app.models import Map
 
-@app.route('/')
 @app.route('/tracking')
 def tracking():
     # TODO: func: python - device-status
@@ -18,14 +18,18 @@ def tracking():
                             pointA=pointA, pointB=pointB,
                             currentLat=currentLat, currentLong=currentLong)
 
+@app.route('/')
 @app.route('/index')
 def index():
+    mapLst = Map.query.all()
     return render_template('index.html')
 
 @app.route('/history')
 def history():
+    # lstHistory = History.query.all()
     return render_template('history.html')
 
 @app.route('/map')
 def map():
-    return render_template('map.html')
+    lstMap = Map.query.all()
+    return render_template('map.html', lstMap=lstMap)
