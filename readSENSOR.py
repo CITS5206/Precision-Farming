@@ -3,8 +3,10 @@ import serial
 import time
 import sys
 import csv
+import datetime
+import re
 
-
+datetoday=str(datetime.date.today())
 
 
 def readGPSSensor(GPS_SENSOR='/dev/tty.usbserial-10'):
@@ -69,7 +71,7 @@ def readtxtfile():
                 c=sensor_list[i][1:] + sensor_list[i+1][2:] + sensor_list[i+2][1:] + sensor_list[i+3][1:]
                 data_list.append(c)
 
-    with open('log_sensor.csv', 'w') as out_file:
+    with open('Sensorlog'+datetoday+'.csv', 'w') as out_file:
         writer = csv.writer(out_file)
         writer.writerow(('Timestamp [HhMmSs]',  'HCP conductivity of 0.5m array [mS/m]',    'HCP inphase of 0.5m array [ppt]',  'PRP conductivity of 0.5m array [mS/m]','PRP inphase of 0.5m array [ppt]',  'HCP conductivity of 1m array [mS/m]',  'HCP inphase of 1m array [ppt]',    'PRP conductivity of 1m array [mS/m]',  'PRP inphase of 1m array [ppt]',    'Voltage [V]'   ,'Temperature [deg]',   'Pitch [deg]',  'Roll [deg]',   'Acceleration X [gal]', 'Acceleration Y [gal]', 'Acceleration Z [gal]',    
         'Magnetic field X [nT]',    'Magnetic field Y [nT]',    'Magnetic field Z [nT]',    'Temperature [deg]'))
@@ -88,7 +90,12 @@ def readtxtfile():
                 temp = gps_data[i].strip().split(',')
                 gps_list.append(temp[0].split(' '))
 
-    with open('log.csv', 'w') as out_file:
+
+    
+
+                
+
+    with open('./Data Reader/GPSlog1'+ datetoday +'.csv', 'w') as out_file:
         writer = csv.writer(out_file)
 
         writer.writerow(('Latitute','Lognigtute','TimeStamp'))
