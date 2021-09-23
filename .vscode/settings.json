@@ -3,9 +3,9 @@
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        "./Data Reader",
+        "./Data_Reader",
         "-p",
-        "*_test.py"
+        "*test.py"
     ],
     "python.testing.pytestEnabled": false,
     "python.testing.nosetestsEnabled": false,

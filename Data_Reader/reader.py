@@ -5,7 +5,10 @@ import os.path
 import datetime
 
 
-path = './Data_reader/txt/'
+
+# Globlal variables
+
+path = './Data_Reader/Textfile/'
 date=str(datetime.date.today())
 file_name_dual = 'Dualemdata'
 file_name_gps = 'GPSdata'
@@ -43,18 +46,15 @@ class readSensor:
                 while True:
                     try:
                     
+                        line = ser.readline().decode('ascii', errors='replace')
                         if self.check_file_exist(dualfullpath):
-                        
+                            
                             with open(dualfullpath,'a') as outfile:
-
-                                line = ser.readline().decode('ascii', errors='replace')
                                 nmeaobj = pynmea2.parse(line.strip())
                                 outfile.write(str(nmeaobj.data)+"\n")
                         else: 
 
                             with open(dualfullpath,'w') as outfile:
-
-                                line = ser.readline().decode('ascii', errors='replace')
                                 nmeaobj = pynmea2.parse(line.strip())
                                 outfile.write(str(nmeaobj.data)+"\n")
                         
@@ -78,19 +78,21 @@ class readSensor:
                         
                         line = ser.readline().decode('ascii', errors='replace')
                         
-                        nmeaobj = pynmea2.parse(line.strip())
+                        
 
                         if self.check_file_exist:
                             with open(GPSfullpath,'a') as outfile:
+                                nmeaobj = pynmea2.parse(line.strip())
                             
-                                outfile.csv.write( line.strip()+"\n"
+                                outfile.write(  line.strip()+"\n"
                                 + "{} {} {} ".format(nmeaobj.latitude,nmeaobj.longitude, nmeaobj.timestamp)
                                 + "\n")
+            
                                 
                         else:
                             with open(GPSfullpath,'w') as outfile:
-                            
-                                outfile.csv.write( line.strip()+"\n"
+                                nmeaobj = pynmea2.parse(line.strip())
+                                outfile.write(  line.strip()+"\n"
                                 + "{} {} {} ".format(nmeaobj.latitude,nmeaobj.longitude, nmeaobj.timestamp)
                                 + "\n")
 

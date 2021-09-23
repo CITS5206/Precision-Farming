@@ -3,10 +3,11 @@
 import csv
 import datetime
 import re
+from typing import final
 
 
 datetoday=str(datetime.date.today())
-print(datetoday)
+#print(datetoday)
 
 # Only works for the lasted txt file in the same day
 
@@ -69,6 +70,32 @@ class creatCSVfile:
 
             writer.writerow(('Latitute','Lognigtute','TimeStamp'))
             writer.writerows(gps_list)
+
+        final_list=[]
+
+        #print(len(data_list[6]))
+        
+        for i in range(10):
+            new_list=[]
+            new_list.append(gps_list[i][0])
+            new_list.append(gps_list[i][1])
+            for j in data_list[i]:
+                new_list.append(j)
+            final_list.append(new_list)
+    
+                
+
+       # print(final_list[0])
+        
+
+        
+
+
+
+        with open(csvpath+'MetaData'+datetoday+'.csv','w') as outfile:
+                writer = csv.writer(outfile)
+                writer.writerow(('Latitute','Lognigtute','Timestamp [HhMmSs]',  'HCP conductivity of 0.5m array [mS/m]',    'HCP inphase of 0.5m array [ppt]',  'PRP conductivity of 0.5m array [mS/m]','PRP inphase of 0.5m array [ppt]',  'HCP conductivity of 1m array [mS/m]',  'HCP inphase of 1m array [ppt]',    'PRP conductivity of 1m array [mS/m]',  'PRP inphase of 1m array [ppt]',    'Voltage [V]'   ,'Temperature [deg]',   'Pitch [deg]',  'Roll [deg]',   'Acceleration X [gal]', 'Acceleration Y [gal]', 'Acceleration Z [gal]', 'Magnetic field X [nT]',    'Magnetic field Y [nT]',    'Magnetic field Z [nT]',    'Temperature [deg]'))
+                writer.writerows(final_list)
 
 
 
