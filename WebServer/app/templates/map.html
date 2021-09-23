@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Map</h1>
+<!-- Use a button to represent a table at the moment -->
+<ul class="buttons">
+    <li>
+        <a href="{{ url_for('tracking') }}">Choose a map to start tracking</a>
+    </li>
+</ul>
+{% endblock %}

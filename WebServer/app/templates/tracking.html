@@ -1,68 +1,51 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tracking</title>
-    <link rel="stylesheet" href="../static/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-    crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-    integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-    crossorigin=""></script>
-</head>
-<body>
-    <div class="content">
-        <div class="upper-wrap">
-            <div class="devices">
-                <!-- TODO: func: js - device-status-shape change color -->
-                <div class="device">
-                    {% if sensor == "up" %}
-                        <div class="device-status-shape" style="background-color: yellowgreen;"></div>
-                    {% else %}
-                        <div class="device-status-shape" style="background-color: red;"></div>
-                    {% endif %}
-                    <p class="device-name">Sensor</p>
-                </div>
-                <div class="device">
-                    {% if gps == "up" %}
-                        <div class="device-status-shape" style="background-color: yellowgreen;"></div>
-                    {% else %}
-                        <div class="device-status-shape" style="background-color: red;"></div>
-                    {% endif %}
-                    <p class="device-name">GPS</p>
-                </div>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <div class="upper-wrap">
+        <div class="devices">
+            <div class="device">
+                {% if sensor == "up" %}
+                    <div class="device-status-shape" style="background-color: yellowgreen;"></div>
+                {% else %}
+                    <div class="device-status-shape" style="background-color: red;"></div>
+                {% endif %}
+                <p class="device-name">Sensor</p>
             </div>
-            
-            <div class="ABpoint">
-                
-                <p class="point-coordinate">A: {{ pointA }} </p>
-                <p class="point-coordinate">B: {{ pointB}}</p>
-            </div>
-            <div class="current-location">
-                <p>Current Location</p>
-                <p>{{ currentLat }}, {{ currentLong }}</p>
+            <div class="device">
+                {% if gps == "up" %}
+                    <div class="device-status-shape" style="background-color: yellowgreen;"></div>
+                {% else %}
+                    <div class="device-status-shape" style="background-color: red;"></div>
+                {% endif %}
+                <p class="device-name">GPS</p>
             </div>
         </div>
-        <!-- <div id="mapid"></div> -->
-        <div id="map"></div>
-        <div class="bottom-wrap">
-            <ul class="buttons">
-                <li>
-                    <a href="#" class="btn" id="btn-track" onclick="tracking()">Start Tracking</a>
-                </li>
-                <li>
-                    <a href="list.html" class="btn">History</a>
-                </li>
-                <li>
-                    <a href="home.html" class="btn">Home</a>
-                </li>
-            </ul>
+        
+        <div class="ABpoint">
+            
+            <p class="point-coordinate">A: {{ pointA }} </p>
+            <p class="point-coordinate">B: {{ pointB }}</p>
+        </div>
+        <div class="current-location">
+            <p>Current Location</p>
+            <p>{{ currentLat }}, {{ currentLong }}</p>
         </div>
     </div>
-    <script src="{{url_for('static', filename='app.js')}}"></script>
-    <script src="{{url_for('static', filename='map.js')}}"></script>
-</body>
-</html>
+    <!-- <div id="mapid"></div> -->
+    <div id="map"></div>
+    <div class="bottom-wrap">
+        <ul class="buttons">
+            <li>
+                <a href="#" class="btn" id="btn-track" onclick="tracking()">Start Tracking</a>
+            </li>
+            <li>
+                <a href="{{ url_for('history') }}" class="btn">History</a>
+            </li>
+            <li>
+                <a href="{{ url_for('index') }}" class="btn">Home</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

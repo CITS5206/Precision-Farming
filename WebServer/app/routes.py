@@ -3,7 +3,7 @@ from flask  import render_template
 
 @app.route('/')
 @app.route('/tracking')
-def index():
+def tracking():
     # TODO: func: python - device-status
     sensor = 'up'
     gps = 'down'
@@ -17,3 +17,15 @@ def index():
                             sensor=sensor, gps=gps,
                             pointA=pointA, pointB=pointB,
                             currentLat=currentLat, currentLong=currentLong)
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+@app.route('/history')
+def history():
+    return render_template('history.html')
+
+@app.route('/map')
+def map():
+    return render_template('map.html')

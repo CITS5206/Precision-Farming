@@ -4,6 +4,23 @@
     padding: 0;
 }
 
+/* Page home */
+.content-home {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.title-home {
+    margin-bottom: 1em;
+}
+
+/* Page tracking */
 .upper-wrap,
 .bottom-wrap {
     background-color: #7C7574;
@@ -45,7 +62,6 @@
 }
 
 #map { 
-    padding: 0;
     height: 84vh; 
     margin-top: 8vh;
 }
