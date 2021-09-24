@@ -20,120 +20,157 @@ import datetime
 
 
 class GUI():
+    """ Precicision Farming App GUI
+        :parameters:
+            None
+        
+        :methods:
+            confirm_selection()
+            serial_ports()
+            openFolder()
+            readSensor()
+            stop_sensor_process()
+        
+        :returns:
+            None
+                    
+    """
+
     def __init__(self):
         """ Initialize a GUI Window
             :returns:
                         None
                     
         """
-
-
         #SET RASPBERRY PI DISPLAY ENVIRONMENT VARIABLE
         if os.environ.get('DISPLAY','') == '':
                 #print('no display found. Using :0.0')
                 os.environ.__setitem__('DISPLAY', ':0.0')
-
-        #INITIALIZE GUI WINDOW
-        self.WINDOW = Tk()
-        self.WINDOW.title("Precision Farming App")
-        self.WINDOW.geometry('440x480')
-        self.WINDOW.minsize(width=440,height=460)
-        self.WINDOW.maxsize(width=440,height=460)
-
-        self.MAINFRAME = Frame(self.WINDOW)
-        self.MAINFRAME.grid(pady=10,padx=10)
+        self.GUIWindow()
+        self.GUIFrame()
+        self.GUIVariables()
+        self.GUISetupOptions()
+        self.GUIFileOptions()
+        self.GUIControlOPtions()
+        self.GUIVisualOptions()
+        self.GUIProgramStatus()
+        self.GUIMasterGrid()
         
-        # PROGRAM VARIABLES
-        self.port= StringVar()
-        self.gps_port = StringVar()
-        self.status = StringVar()
-        self.proc = None
+    def GUIMainloop(self):
+        self.WINDOW.mainloop()    
 
-        # START : SETUP OPTIONS
-        self.LINE_DIVIDER_1 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
-        self.SETUP_LABEL = ttk.Label(self.MAINFRAME, text="SETUP OPTIONS",justify=tkinter.CENTER)
+    def GUIWindow(self):
+
+            #INITIALIZE GUI WINDOW
+            self.WINDOW = Tk()
+            self.WINDOW.title("Precision Farming App")
+            self.WINDOW.geometry('440x480')
+            self.WINDOW.minsize(width=440,height=460)
+            self.WINDOW.maxsize(width=440,height=460)
         
-        # SETUP OPTIONS --> SCAN AND VERIY 
-        self.SCAN_BTN = Button(self.MAINFRAME, text="SCAN PORTS", command=self.serial_ports,width=19,padx=2,pady=2)
-        self.CONFIRM_BTN = Button(self.MAINFRAME, text="CONFIRM SELECTION", command=self.confirm_selection,state="disabled",width=19,pady=2,padx=2, bg="#c90231")
+    def GUIFrame(self):
+            self.MAINFRAME = Frame(self.WINDOW)
+            self.MAINFRAME.grid(pady=10,padx=10)
+
+    def GUIVariables(self):
+             # PROGRAM VARIABLES
+            self.port= StringVar()
+            self.gps_port = StringVar()
+            self.status = StringVar()
+            self.proc = None
+            self.LEGAL_OPTIONS= ['/dev/tty.usbserial-AL02V3VW','/dev/ttyUSB-AL02V3VW']
+
+    def GUISetupOptions(self):
+
+            # START : SETUP OPTIONS
+            self.LINE_DIVIDER_1 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
+            self.SETUP_LABEL = ttk.Label(self.MAINFRAME, text="SETUP OPTIONS",justify=tkinter.CENTER)
         
-        # SETUP OPTIONS --> SCAN DUALEM PORT
-        self.DUALEM_LABEL = ttk.Label(self.MAINFRAME, text="SENSOR PORT",justify=tkinter.LEFT)
-        self.DUALEM_PORT_OPTION_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.port, state='disabled',width=20)
-        self.DUALEM_PORT_OPTION_BTN.set("WAIT FOR SCAN")
+            # SETUP OPTIONS --> SCAN AND VERIY 
+            self.SCAN_BTN = Button(self.MAINFRAME, text="SCAN PORTS", command=self.serial_ports,width=19,padx=2,pady=2)
+            self.CONFIRM_BTN = Button(self.MAINFRAME, text="CONFIRM SELECTION", command=self.confirm_selection,state="disabled",width=19,pady=2,padx=2, bg="#c90231")
         
-        # SETUP OPTIONS --> SCAN GPS PORT
-        self.GPS_LABEL = ttk.Label(self.MAINFRAME, text="GPS PORT",justify=tkinter.LEFT)
-        self.GPS_PORT_OPTION_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.gps_port, state='disabled',width=20)
-        self.GPS_PORT_OPTION_BTN.set("WAIT FOR SCAN")
-        # END : SETUP OPTIONS
-
-        # START : FILE OPTIONS
-        self.LINE_DIVIDER_2 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
-        self.FILE_LABEL = ttk.Label(self.MAINFRAME, text="FILE OPTIONS",justify=tkinter.CENTER)
-        self.SAVE_PROJECT_BTN = Button(self.MAINFRAME, text="SAVE PROJECT", command=self.openFolder,width=19,padx=2,pady=2,state='disabled')
-        self.EXISTING_FOLDER_BTN = Button(self.MAINFRAME, text="OPEN EXISTING PROJECT", command=self.openFolder,width=19,padx=2,pady=2, state="disabled")
-
-        # END : FILE OPTIONS
-
-        # START : CONTROL OPTIONS
-        self.CONTROL_LABEL = ttk.Label(self.MAINFRAME, text='CONTROL PANEL',justify=tkinter.CENTER)
-        self.LINE_DIVIDER_3 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
-
-        self.START_SENSOR_BTN = Button(self.MAINFRAME,text="START SENSOR READING",command=self.readSensor, state="disabled",width=19,padx=2,pady=2)
-        self.STOP_SENSOR_BTN = Button(self.MAINFRAME,text="STOP SENSOR READING", command=self.stop_sensor_process, state="disabled",width=19,padx=2,pady=2)
-        # END : CONTROL OPTIONS
-
-
-        # START: VISUALIZATION
-        self.LINE_DIVIDER_4 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
-        self.VISUAL_LABEL = ttk.Label(self.MAINFRAME, text='VISUALIZATION',justify=tkinter.CENTER)
-        self.START_WEBSEVER_BTN = Button(self.MAINFRAME,text="START WEBSERVER",command=self.readSensor, state="disabled",width=19,padx=2,pady=2)
-        self.STOP_WEBSEVER_BTN = Button(self.MAINFRAME,text="STOP WEBSERVER",command=self.readSensor, state="disabled",width=19,padx=2,pady=2)
-
-
-
-        # END: VISUALIZATION
-
-        # START: STATUS INDICATOR
-        self.LINE_DIVIDER_5 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
-        self.STATUS_INDICATOR = ttk.Label(self.MAINFRAME,textvariable=self.status,relief=tkinter.SUNKEN,width=40,justify=tkinter.LEFT)
-        self.status.set("NO ACTIVITY")
+            # SETUP OPTIONS --> SCAN DUALEM PORT
+            self.DUALEM_LABEL = ttk.Label(self.MAINFRAME, text="SENSOR PORT",justify=tkinter.LEFT)
+            self.DUALEM_PORT_OPTION_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.port, state='disabled',width=20)
+            self.DUALEM_PORT_OPTION_BTN.set("WAIT FOR SCAN")
         
-        # MASTER GRID LAYOUT
-        self.LINE_DIVIDER_1.grid(row=0,columnspan=2)
-        self.SETUP_LABEL.grid(row=1,columnspan=2,pady=2)
-        self.SCAN_BTN.grid(row=2,column=0)
-        self.CONFIRM_BTN.grid(row=2,column=1)
-        self.DUALEM_LABEL.grid(row=3,column=0)
-        self.DUALEM_PORT_OPTION_BTN.grid(row=3,column=1,pady=2)
-        self.GPS_LABEL.grid(row=4,column=0)
-        self.GPS_PORT_OPTION_BTN.grid(row=4,column=1,pady=2)
+            # SETUP OPTIONS --> SCAN GPS PORT
+            self.GPS_LABEL = ttk.Label(self.MAINFRAME, text="GPS PORT",justify=tkinter.LEFT)
+            self.GPS_PORT_OPTION_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.gps_port, state='disabled',width=20)
+            self.GPS_PORT_OPTION_BTN.set("WAIT FOR SCAN")
+            # END : SETUP OPTIONS
 
-        self.LINE_DIVIDER_2.grid(row=5,columnspan=2)
-        self.FILE_LABEL.grid(row=6,columnspan=2,pady=2)
-        self.SAVE_PROJECT_BTN.grid(row=7,column=0)
-        self.EXISTING_FOLDER_BTN.grid(row=7,column=1)
+    def GUIFileOptions(self):
+
+            # START : FILE OPTIONS
+            self.LINE_DIVIDER_2 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
+            self.FILE_LABEL = ttk.Label(self.MAINFRAME, text="FILE OPTIONS",justify=tkinter.CENTER)
+            self.SAVE_PROJECT_BTN = Button(self.MAINFRAME, text="SAVE PROJECT", command=self.openFolder,width=19,padx=2,pady=2,state='disabled')
+            self.EXISTING_FOLDER_BTN = Button(self.MAINFRAME, text="OPEN EXISTING PROJECT", command=self.openFolder,width=19,padx=2,pady=2, state="disabled")
+
+            # END : FILE OPTIONS
+   
+    def GUIControlOPtions(self):
 
 
-        self.LINE_DIVIDER_3.grid(row=8,columnspan=2)
-        self.CONTROL_LABEL.grid(row=9,columnspan=2,pady=2)
-        self.START_SENSOR_BTN.grid(row=10,column=0)
-        self.STOP_SENSOR_BTN.grid(row=10,column=1)
+            # START : CONTROL OPTIONS
+            self.CONTROL_LABEL = ttk.Label(self.MAINFRAME, text='CONTROL PANEL',justify=tkinter.CENTER)
+            self.LINE_DIVIDER_3 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
+
+            self.START_SENSOR_BTN = Button(self.MAINFRAME,text="START SENSOR READING",command=self.readSensor, state="disabled",width=19,padx=2,pady=2)
+            self.STOP_SENSOR_BTN = Button(self.MAINFRAME,text="STOP SENSOR READING", command=self.stop_sensor_process, state="disabled",width=19,padx=2,pady=2)
+            # END : CONTROL OPTIONS
+
+    def GUIVisualOptions(self):
+            # START: VISUALIZATION
+            self.LINE_DIVIDER_4 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
+            self.VISUAL_LABEL = ttk.Label(self.MAINFRAME, text='VISUALIZATION',justify=tkinter.CENTER)
+            self.START_WEBSEVER_BTN = Button(self.MAINFRAME,text="START WEBSERVER",command=self.readSensor, state="disabled",width=19,padx=2,pady=2)
+            self.STOP_WEBSEVER_BTN = Button(self.MAINFRAME,text="STOP WEBSERVER",command=self.readSensor, state="disabled",width=19,padx=2,pady=2)
+
+
+
+            # END: VISUALIZATION
+
+    def GUIProgramStatus(self):
+            # START: STATUS INDICATOR
+            self.LINE_DIVIDER_5 = ttk.Label(self.MAINFRAME, text='{:-<68}'.format(''),justify=tkinter.LEFT)
+            self.STATUS_INDICATOR = ttk.Label(self.MAINFRAME,textvariable=self.status,relief=tkinter.SUNKEN,width=40,justify=tkinter.LEFT)
+            self.status.set("NO ACTIVITY")
+        
+    def GUIMasterGrid(self):
+            
+            # MASTER GRID LAYOUT
+            self.LINE_DIVIDER_1.grid(row=0,columnspan=2)
+            self.SETUP_LABEL.grid(row=1,columnspan=2,pady=2)
+            self.SCAN_BTN.grid(row=2,column=0)
+            self.CONFIRM_BTN.grid(row=2,column=1)
+            self.DUALEM_LABEL.grid(row=3,column=0)
+            self.DUALEM_PORT_OPTION_BTN.grid(row=3,column=1,pady=2)
+            self.GPS_LABEL.grid(row=4,column=0)
+            self.GPS_PORT_OPTION_BTN.grid(row=4,column=1,pady=2)
+
+            self.LINE_DIVIDER_2.grid(row=5,columnspan=2)
+            self.FILE_LABEL.grid(row=6,columnspan=2,pady=2)
+            self.SAVE_PROJECT_BTN.grid(row=7,column=0)
+            self.EXISTING_FOLDER_BTN.grid(row=7,column=1)
+
+
+            self.LINE_DIVIDER_3.grid(row=8,columnspan=2)
+            self.CONTROL_LABEL.grid(row=9,columnspan=2,pady=2)
+            self.START_SENSOR_BTN.grid(row=10,column=0)
+            self.STOP_SENSOR_BTN.grid(row=10,column=1)
         
         
-        self.LINE_DIVIDER_4.grid(row=11,columnspan=2)
-        self.VISUAL_LABEL.grid(row=12,columnspan=2,pady=2)
-        self.START_WEBSEVER_BTN.grid(row=13,column=0)
-        self.STOP_WEBSEVER_BTN.grid(row=13,column=1)
+            self.LINE_DIVIDER_4.grid(row=11,columnspan=2)
+            self.VISUAL_LABEL.grid(row=12,columnspan=2,pady=2)
+            self.START_WEBSEVER_BTN.grid(row=13,column=0)
+            self.STOP_WEBSEVER_BTN.grid(row=13,column=1)
 
-        self.LINE_DIVIDER_5.grid(row=14,columnspan=2)
+            self.LINE_DIVIDER_5.grid(row=14,columnspan=2)
 
-        self.STATUS_INDICATOR.grid(row=20,columnspan=2,pady=2)
-
-        self.MAINFRAME.mainloop()
-        
-
+            self.STATUS_INDICATOR.grid(row=20,columnspan=2,pady=2)
 
     def confirm_selection(self):
         FLAG = ["WAIT FOR SCAN","USB NOT DETECTED" ]
@@ -145,8 +182,8 @@ class GUI():
                 self.GPS_PORT_OPTION_BTN.state(["disabled"])
                 self.CONFIRM_BTN.config(bg='#02c916')
                 self.CONFIRM_BTN.config(text="MODIFY SELECTION")
-                #self.MAINFRAME.update()
                 self.status.set("CMD: CONFIRM SELECTION\nSTATUS: OK")
+
         elif self.CONFIRM_BTN.cget('text') == "MODIFY SELECTION":
                 self.SCAN_BTN['state'] = tkinter.NORMAL
                 self.SAVE_PROJECT_BTN['state'] = tkinter.DISABLED
@@ -156,8 +193,6 @@ class GUI():
                 self.status.set("CMD: MODIFY SELECTION\nSTATUS: OK")
 
                 #self.MAINFRAME.update()
-
-
 
     def serial_ports(self):
         """ Lists serial port names
@@ -212,7 +247,6 @@ class GUI():
             self.status.set("CMD: SCAN PORTS\nSTATUS: CHECK CONNECTION ")
         #self.SCAN_BTN.configure(text="RESCAN PORTS")
         self.CONFIRM_BTN.configure(bg="#c90231")
-        
     
     def openFolder(self):
         try:
@@ -254,8 +288,7 @@ class GUI():
     
     def readSensor(self):
 
-        LEGAL_OPTIONS= ['/dev/tty.usbserial-AL02V3VW','/dev/ttyUSB-AL02V3VW']
-        if self.port.get() == LEGAL_OPTIONS:
+        if self.port.get() == self.LEGAL_OPTIONS:
             self.proc = subprocess.Popen(['python3','readSENSOR.py', self.port.get()]) 
              # Run other script - doesn't wait for it to finish.
         print(self.proc.pid)
@@ -265,28 +298,30 @@ class GUI():
     
     def stop_sensor_process(self):
         try:
-            if self.proc.pid:
+            if self.proc:
                 self.proc.terminate()
                 print("PROCESS: {} TERMINATED".format(self.proc.pid))
+                return True
+            return False
+
         except Exception as e:
             print("NO PROCESS TO TERMINATE")
-
+            return False
         
 
 
 
 
     
-
+if __name__ == "__main__":
+    try:
+        gui = GUI()
+        gui.GUIMainloop()
+    except Exception as e:
+        print(e)
+    finally:
+        gui.stop_sensor_process()
         
 
         
 
-try:
-    gui = GUI()
-    
-except Exception as e:
-    print(e)
-
-finally:
-    gui.stop_sensor_process()
