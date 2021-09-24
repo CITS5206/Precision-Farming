@@ -18,10 +18,10 @@
     1. [Required] Python 3.7.3 and above
     2. [Required] PySerial 3.5 and above
     3. [Required] PyNMEA-2 1.18 and above
+### Python Companion App - Install Dependent Packages
     
-    ```
-            pip install requirements.txt
-    ```
+    pip install requirements.txt
+    
     
 ### Python Companion App - Running the GUI
     1. Download or clone the repo.
