@@ -21,4 +21,4 @@ flask run
 
 ## Quick start for client
 Option 1. Open python GUI, connect hardwares and click "START WEBSERVER", then access web application via browser.  
-Option 2. Use an exacutable file to open the web application. (Ongoing development)
+Option 2. Use an executable file to open the web application. (Ongoing development)
