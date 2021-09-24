@@ -1,14 +1,16 @@
 var map = L.map( 'map', {
     center: [-32.5041679, 116.9701738],
     minZoom: 0,
-    zoom: 20
+    zoom: 30
     });
     
 function initMap() {   
        
     L.tileLayer('/static/maps/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        subdomains: ['a','b','c']
+        subdomains: ['a','b','c'],
+        maxNativeZoom: 19,
+        maxZoom: 25
         }).addTo( map );
 
     // var latlngs = [
