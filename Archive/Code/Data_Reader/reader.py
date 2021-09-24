@@ -18,11 +18,11 @@ GPSfullpath=path+file_name_gps+".txt"
 
 
 
-
-
 class readSensor: 
 
-
+    # Checks the file exist in the path or not 
+    # Parameter input path value
+    # parameter output boolean
     def check_file_exist(self,filepath):
 
         try:
@@ -33,7 +33,12 @@ class readSensor:
     
         except Exception as e: 
             print(e)
-            
+
+    # This function takes the port and baurd rate for Dualem sensor values as input 
+    # Uses Serial class from piserial to read stream input values from the passed port number and specific barud rate
+    # With reading the values as list of ascii values  uses the pynmea class and object to parse the ascci format 
+    # Formated values in written into txt file to specific text file folder path  
+    # The text file name will have timestamp atttached with it    
 
     def dualemsensor(self,port,baudrate):
 
@@ -67,6 +72,12 @@ class readSensor:
         except Exception as e:
             print(e)
 
+
+     # This function takes the port and baurd rate  for GPS values as input 
+    # Uses Serial class from piserial to read stream input values from the passed port number and specific barud rate
+    # With reading the values as list of ascii values  uses the pynmea class and object to parse the ascci format 
+    # Formated values in written into txt file to specific text file folder path  
+    # The text file name will have timestamp atttached with it  
 
     def gpssensor(self,port,baudrate):
         try:

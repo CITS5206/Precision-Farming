@@ -20,16 +20,7 @@ class TestSensorReader(unittest.TestCase):
 
         os.remove("./Archive/Code/Data_Reader/test.txt")
 
-    
-    # def test_createcsv_sensor(self):
-    #     temp = creatCSVfile()
-    #     temp.readtxtfile()
-    #     date=str(datetime.date.today())
-    #     val=os.path.isfile("./Archive/Code/Data_Reader/CSVfile/DUALEMdata"+date+".csv")
-    #     self.assertEquals(val,True)
-    #     if val:
-    #         os.remove("./Archive/Code/Data_Reader/CSVfile/DUALEMdata"+date+".csv")
-        
+# Test case to check csv file creation in csv path
         
     def test_createcsv(self):
         temp1 = creatCSVfile()
