@@ -7,8 +7,18 @@ It will generate a json file format out from the csv file
 import os
 import csv
 import json
+import re
 
+#checks if input file has contents
+def check_file_content(f):
+   # check if size of file is 0
+   content = open(f, 'r').read()
+   if re.search(r'^\s*$', content):
+      return True #true if file has no content
+   else:
+      return False #true if file has content
 
+     
 # Function to convert list to string 
 def listToString(s): 
     
@@ -61,23 +71,32 @@ def convert_to_json(csvfile, jsonfile):
     with open(jsonfile, 'w', encoding='utf-8') as jf:
         jf.write(json.dumps(data, indent=2))
          
+
 ### MAIN CODE ####
  
-# The two files needed for the program
-
+#Step1:  Set the two files needed for the program
 csv_file = r'DUALEM-orignal.csv' #this file is coming from the combined dualem and gps data given by Hira
-json_file = r'dualem-output.json' #this will be the converted json file. This creates the file name if json file is not present
+json_file = r'dualem-output3.json' #this will be the converted json file. This creates the file name if json file is not present
  
-#checks if file is present in the current directory where .py is located
+#Step2: check if file is present in the current directory where .py is located
 file_status  = find_files(csv_file, '.') 
 
 if not file_status:
    print("Csv file does not exist the directory. Please input another that in the directory")
 
 else:
-   # If file is in the directory, get directory of file 
-   #print(listToString(file_status))
-   csv_file_path = listToString(file_status)
+   #Step 3: If file is in the directory, get directory of file
 
-   # then call the convert_to_json function
-   convert_to_json(csv_file_path , json_file)
+   #convert file_status type to string format
+   csv_file_path = listToString(file_status)
+  
+   
+   #Step 4: check if file has content
+   if not check_file_content(csv_file_path):
+      #then call the convert_to_json function
+      convert_to_json(csv_file_path , json_file)
+   else:
+      print('File has empty contents')
+
+  
+   
