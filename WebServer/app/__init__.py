@@ -3,6 +3,7 @@ from flask import Flask
 # from flask_sqlalchemy import SQLAlchemy 
 # from flask_migrate import Migrate 
 # from flask_login import LoginManager
+# can be used in the future if need database/login
 
 
 app = Flask(__name__)

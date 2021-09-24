@@ -1,9 +1,11 @@
+//create a map the center coordinates will need to be changed to get them from user
 var map = L.map( 'map', {
     center: [-32.5041679, 116.9701738],
     minZoom: 0,
     zoom: 30
     });
-    
+ 
+//initiate a layer    
 function initMap() {   
        
     L.tileLayer('/static/maps/{z}/{x}/{y}.png', {
@@ -12,33 +14,25 @@ function initMap() {
         maxNativeZoom: 19,
         maxZoom: 25
         }).addTo( map );
-
-    // var latlngs = [
-    //     [115.8179331,-31.9800244],
-    //     [115.8179330,-31.9800241],
-    //     [115.8179332,-31.9800242]
-    // ];
-
-    // var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
 };
+
+//polyline
 var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
+
 
 function addLine() {
         getJson(function () {
+            //check that coordinates is correct in console
             console.log(latlngs);
+            //remove previous polyline
             polyline.removeFrom(map);
+            //add new polyline
             polyline = L.polyline(latlngs, {color: 'red'}).addTo( map );
             })
     
-    //var latlngs = [[-32.5041679, 116.9701738],[-32.5041083, 116.9701581]];
-    //console.log(latlngs);
-    //L.polyline(latlngs, {color: 'red'}).addTo( map );
-
-
 };
 
 $(document).ready(function() {initMap();});
 
-//addLine();
+//call every 2s
 setInterval(addLine, 2000);
-//setInterval(getlatlngs, 2000);

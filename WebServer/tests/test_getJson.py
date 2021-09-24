@@ -5,6 +5,8 @@ from app.routes import getJson
 class testGetJson(unittest.TestCase):
     def test_getJson(self):
         path = './tests/test_getJson.json'
+        # change the result list according to any change in the 
+        # "test_getJson.json" and vice versa
         result = json.dumps([
             ["-32.5041679", "116.9701738"], 
             ["-32.5041678", "116.9701739"],
