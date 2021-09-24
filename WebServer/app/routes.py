@@ -8,8 +8,8 @@ def tracking():
     sensor = 'up'
     gps = 'down'
     # TODO: func: get A, B coordinate
-    pointA = '-40.678901, 163.8765432'
-    pointB = '-40.678901, 163.8765432'
+    pointA = '-30.678901, 114.8765432'
+    pointB = '-32.678901, 116.8765432'
     # TODO: func: python - get current-location
     currentLat = '-31.980945378411835'
     currentLong = '115.81819424545051'

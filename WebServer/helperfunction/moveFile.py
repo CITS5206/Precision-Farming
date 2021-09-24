@@ -10,7 +10,10 @@ import os
 import shutil
 from tkinter import *
 
-# srcDir using func2 to find the path of the file?
+# change the srcDir and fileName to the file / folder need to be moved
+# change the DESTINATION_DIR to where to folder / file need to be moved to
+
+# srcDir using funcion2 to find the path of the file?
 srcDir = '/Users/mha/Desktop/MoveFiles/OriginDir'
 fileName = 'test.csv'
 
@@ -21,10 +24,10 @@ window = Tk()
 window.title("Precision Farming App")
 window.geometry('1024x614')
 
-lbl_moveFile = Label(window, text="File")
+lbl_moveFile = Label(window, text="{}/{}".format(srcDir, fileName))
 lbl_moveFile.grid(column=0, row=0)
 
-lbl_moveFolder = Label(window, text="Folder")
+lbl_moveFolder = Label(window, text="{}".format(srcDir))
 lbl_moveFolder.grid(column=0, row=1)
 
 
