@@ -45,7 +45,7 @@ def moveFile(dirName, fileName):
         outTxt = f'{fileName} have been moved to {newPath}'
         # print(outTxt)
     except FileNotFoundError as e:
-        print(e)
+        print("The file is not exists")
 
 # Move folder
     # if the folder exists in destination folder, delete the the existing folder
@@ -60,7 +60,7 @@ def moveFolder(srcDir):
         newPath = shutil.move(srcDir, DESTINATION_DIR)
         # outTxt = f'{folder} have been move to {newPath}'
     except FileNotFoundError as e:
-        print(e)
+        print("The folder is not exists")
 
 def main():
     # Create a test folder

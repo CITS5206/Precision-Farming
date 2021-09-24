@@ -22,3 +22,17 @@ flask run
 ## Quick start for client
 Option 1. Open python GUI, connect hardwares and click "START WEBSERVER", then access web application via browser.  
 Option 2. Use an executable file to open the web application. (Ongoing development)
+
+
+## Web Application
+
+### Home Page
+From home page of this applicaiton, users could use map or history button to view avaiable maps and history data collection record.  
+
+### Map page
+In map page, there are a list of maps of different map which could be use to perform data collection and visualization.  
+Choose the fild map would like to use to process to viem map and start tracking
+
+### Tracking page
+In tracking page, the map selected in previous page would be shown with location coordinate and hardware status informaiton on top and operation button on th bottom.
+

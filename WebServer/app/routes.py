@@ -13,7 +13,7 @@ def tracking():
     # TODO: func: python - get current-location
     currentLat = '-31.980945378411835'
     currentLong = '115.81819424545051'
-    return render_template('tracking.html', 
+    return render_template('tracking.html', title='PrecisionFarming-Tracking', 
                             sensor=sensor, gps=gps,
                             pointA=pointA, pointB=pointB,
                             currentLat=currentLat, currentLong=currentLong)
@@ -22,14 +22,14 @@ def tracking():
 @app.route('/index')
 def index():
     mapLst = Map.query.all()
-    return render_template('index.html')
+    return render_template('index.html', title='PrecisionFarming-Home')
 
 @app.route('/history')
 def history():
     # lstHistory = History.query.all()
-    return render_template('history.html')
+    return render_template('history.html', title='History')
 
 @app.route('/map')
 def map():
     lstMap = Map.query.all()
-    return render_template('map.html', lstMap=lstMap)
+    return render_template('map.html', title='PrecisionFarming-Map', lstMap=lstMap)
