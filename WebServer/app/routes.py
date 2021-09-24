@@ -23,9 +23,9 @@ if __name__ == "__main__":
 #     jsonfile=json.dumps(data)
 #     return jsonfile
 
-@app.route('/test2')
-def test2():
-    myfile = open('./out2.json', 'r')
+@app.route('/getJson')
+def getJson(path='./out2.json'):
+    myfile = open(path, 'r')
     data = myfile.read()
     polylist = []
     datajson = json.loads(data)

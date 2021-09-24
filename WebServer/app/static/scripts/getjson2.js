@@ -1,7 +1,7 @@
 var latlngs = [];
 
 var getJson = async (callback) => {
-    var res = await fetch('/test2', {cache: "no-cache"});
+    var res = await fetch('/getJson', {cache: "no-cache"});
     var resJson = await res.json();
     //console.log(resJson);
     latlngs = resJson;
