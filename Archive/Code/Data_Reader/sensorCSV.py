@@ -6,22 +6,27 @@ import re
 from typing import final
 
 
+# Current datetime
 datetoday=str(datetime.date.today())
-#print(datetoday)
 
-# Only works for the lasted txt file in the same day
 
-sensortextpath='./Data_Reader/Textfile/Dualemdata'+datetoday+'.txt'
-gpstextpath='./Data_Reader/Textfile/GPSdata'+datetoday+'.txt'
 
-csvpath= './Data_Reader/CSVfile/'
+
+sensortextpath='./Archive/Code/Data_Reader/Textfile/Dualemdata'+datetoday+'.txt'
+gpstextpath='./Archive/Code/Data_Reader/Textfile/GPSdata'+datetoday+'.txt'
+
+csvpath= './Archive/Code/Data_Reader/CSVfile/'
 
 class creatCSVfile:
 
+# This function is used to create the csv file for GPS and sensor using the text file that was generated in reader class
+# reads the input values from both txt file and store them in seperate list
+# The sensor data has single row value  for csv in 4 rows of txt file. so seperate if condition check for every 4 values and append it in one list
+# Once the list is created using csv library the csv file is generarted with header 
+# 2 csv files for sensor and gps and 1 csv file with metadata will be created in CSV file path
+# All csv file will have timestamp attached to file name
+
     def readtxtfile(self):
-
-        # Read the txt file generate from program
-
         with open(sensortextpath, 'r') as sensor_file:
 
             sensor_list=[]
@@ -73,8 +78,8 @@ class creatCSVfile:
 
         final_list=[]
 
-        #print(len(data_list[6]))
-        
+
+        # loop that appends two list and creates the list with both values        
         for i in range(10):
             new_list=[]
             new_list.append(gps_list[i][0])
@@ -82,15 +87,9 @@ class creatCSVfile:
             for j in data_list[i]:
                 new_list.append(j)
             final_list.append(new_list)
-    
-                
-
-       # print(final_list[0])
-        
-
-        
 
 
+        # Creates the meta data csv
 
         with open(csvpath+'MetaData'+datetoday+'.csv','w') as outfile:
                 writer = csv.writer(outfile)
