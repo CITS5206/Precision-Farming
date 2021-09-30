@@ -3,10 +3,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
-    '''
-    Config app token, generate 16 digits secret key using secrets package 
-    in python interpretor
-    '''
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'cits5206-2769'
 
     # Config database
     # Provide configuration variable or fallback value

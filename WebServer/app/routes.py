@@ -1,6 +1,7 @@
 from app        import app, db
 from flask      import render_template
 from app.models import Map
+import json
 
 @app.route('/tracking')
 def tracking():
@@ -33,3 +34,17 @@ def history():
 def map():
     lstMap = Map.query.all()
     return render_template('map.html', title='PrecisionFarming-Map', lstMap=lstMap)
+
+@app.route('/test2')
+def test2():
+    myfile = open('./out2.json', 'r')
+    data = myfile.read()
+    polylist = []
+    datajson = json.loads(data)
+    for key in datajson:
+        latlonglist = [0,0]
+        latlonglist[0] = key
+        latlonglist[1] = datajson[key]['LONd']
+        polylist.append(latlonglist)
+    polylistjson = json.dumps(polylist)
+    return polylistjson

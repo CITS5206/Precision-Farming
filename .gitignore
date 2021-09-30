@@ -1,5 +1,6 @@
 venv/
 temp-venv/
+.flaskenv
 
 *.pyc
 __pycache__/
@@ -9,4 +10,4 @@ __pycache__/
 .DS_Store
 
 
-
+maps/

@@ -7,5 +7,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
 
 from app import routes, models
