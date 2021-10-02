@@ -35,9 +35,9 @@ def map():
     lstMap = Map.query.all()
     return render_template('map.html', title='PrecisionFarming-Map', lstMap=lstMap)
 
-@app.route('/test2')
-def test2():
-    myfile = open('./out2.json', 'r')
+@app.route('/getJson')
+def getJson(path='./out2.json'):
+    myfile = open(path, 'r')
     data = myfile.read()
     polylist = []
     datajson = json.loads(data)
