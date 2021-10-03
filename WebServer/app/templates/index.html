@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-home">
+    <h1 class="title-home">Precision Farming</h1>
+    <div class="nav">
+        <ul class="buttons">
+            <li>
+                <a href="{{ url_for('map') }}" class="btn">Map</a>
+            </li>
+            <li>
+                <a href="{{ url_for('history') }}" class="btn">History</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

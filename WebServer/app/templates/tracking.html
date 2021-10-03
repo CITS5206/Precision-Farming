@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <div class="upper-wrap">
+        <div class="devices">
+            <div class="device">
+                {% if sensor == "up" %}
+                    <div class="device-status-shape" style="background-color: yellowgreen;"></div>
+                {% else %}
+                    <div class="device-status-shape" style="background-color: red;"></div>
+                {% endif %}
+                <p class="device-name">Sensor</p>
+            </div>
+            <div class="device">
+                {% if gps == "up" %}
+                    <div class="device-status-shape" style="background-color: yellowgreen;"></div>
+                {% else %}
+                    <div class="device-status-shape" style="background-color: red;"></div>
+                {% endif %}
+                <p class="device-name">GPS</p>
+            </div>
+        </div>
+        
+        <div class="ABpoint">
+            
+            <p class="point-coordinate">A: {{ pointA }} </p>
+            <p class="point-coordinate">B: {{ pointB }}</p>
+        </div>
+        <div class="current-location">
+            <p>Current Location</p>
+            <p>{{ currentLat }}, {{ currentLong }}</p>
+        </div>
+    </div>
+    <div id="map"></div>
+    <div class="bottom-wrap">
+        <ul class="buttons">
+            <li>
+                <a href="#" class="btn" id="btn-track" onclick="tracking()">Start Tracking</a>
+            </li>
+            <li>
+                <a href="{{ url_for('history') }}" class="btn">History</a>
+            </li>
+            <li>
+                <a href="{{ url_for('index') }}" class="btn">Home</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var mapName = {{ map.mapName|tojson }}
+    var currentLat = {{ currentLat|tojson }}
+    var currentLong = {{ currentLong|tojson }}
+</script>
+<script type='text/javascript' src="{{ url_for('static', filename='map.js') }}"></script>
+{% endblock %}

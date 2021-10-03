@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title-map">Map</h1>
+
+<table class ="list">
+    <tr class ="list">
+        <th class ="list">Field</th>
+        <th class ="list">Operation</th>
+    </tr>
+    {% for m in lstMap %}
+    <tr class ="list">        
+        <td class ="list">{{ m.mapName }} </td>
+        <td class ="list">
+            <a href="{{ url_for('tracking', mapid = m.id) }}" class="btn-intable">Use</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
