@@ -47,5 +47,10 @@
         </ul>
     </div>
 </div>
+<script type="text/javascript">
+    var mapName = {{ map.mapName|tojson }}
+    var currentLat = {{ currentLat|tojson }}
+    var currentLong = {{ currentLong|tojson }}
+</script>
 <script type='text/javascript' src="{{ url_for('static', filename='map.js') }}"></script>
 {% endblock %}

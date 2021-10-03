@@ -3,8 +3,8 @@ from flask      import render_template
 from app.models import Map
 import json
 
-@app.route('/tracking')
-def tracking():
+@app.route('/tracking/<mapid>')
+def tracking(mapid):
     # TODO: func: python - device-status
     sensor = 'up'
     gps = 'down'
@@ -14,10 +14,12 @@ def tracking():
     # TODO: func: python - get current-location
     currentLat = '-31.980945378411835'
     currentLong = '115.81819424545051'
+    map = Map.query.filter_by(id = mapid).first_or_404()
     return render_template('tracking.html', title='PrecisionFarming-Tracking', 
                             sensor=sensor, gps=gps,
                             pointA=pointA, pointB=pointB,
-                            currentLat=currentLat, currentLong=currentLong)
+                            currentLat=currentLat, currentLong=currentLong,
+                            map=map)
 
 @app.route('/')
 @app.route('/index')

@@ -2,13 +2,6 @@
 
 {% block content %}
 <h1 class="title-map">Map</h1>
-<!-- Use a button to represent a table at the moment -->
-<!-- <ul class="buttons">
-    <li>
-        <p>{{ lstMap }} {{ lstMap[0].mapName}}</p>
-        <a href="{{ url_for('tracking') }}">view</a>
-    </li>
-</ul> -->
 
 <table class ="list">
     <tr class ="list">
@@ -19,7 +12,7 @@
     <tr class ="list">        
         <td class ="list">{{ m.mapName }} </td>
         <td class ="list">
-            <a href="{{ url_for('tracking') }}" class="btn-intable">Use</a>
+            <a href="{{ url_for('tracking', mapid = m.id) }}" class="btn-intable">Use</a>
         </td>
     </tr>
     {% endfor %}
