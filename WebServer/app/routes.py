@@ -27,16 +27,36 @@ if __name__ == "__main__":
 #     return jsonfile
 # Use this code if the input file is already in the correct format
 
+# @app.route('/getJson')
+# def getJson(path='./out2.json'):
+#     myfile = open(path, 'r')
+#     data = myfile.read()
+#     polylist = []
+#     datajson = json.loads(data)
+#     for key in datajson:
+#         latlonglist = [0,0]
+#         latlonglist[0] = key
+#         latlonglist[1] = datajson[key]['LONd']
+#         polylist.append(latlonglist)
+#     polylistjson = json.dumps(polylist)
+#     return polylistjson
+
 @app.route('/getJson')
-def getJson(path='./out2.json'):
+def getJson(path='./out3.json'):
     myfile = open(path, 'r')
     data = myfile.read()
     polylist = []
+    posDict = {}
     datajson = json.loads(data)
-    for key in datajson:
+    length = len(datajson["LAT"])
+    for i in range(length):
         latlonglist = [0,0]
-        latlonglist[0] = key
-        latlonglist[1] = datajson[key]['LONd']
+        latlonglist[0] = datajson["LAT"][i]
+        latlonglist[1] = datajson["LONG"][i]
         polylist.append(latlonglist)
-    polylistjson = json.dumps(polylist)
-    return polylistjson
+    posDict["pos"] = polylist
+    posDict["currentPos"] = datajson["CURRENT_POS"]
+    #polylistjson = json.dumps(polylist)
+    #currentPos = json.dumps(datajson["CURRENT_POS"])
+    return posDict
+
