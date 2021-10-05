@@ -33,6 +33,18 @@
         </div>
     </div>
     <div id="map"></div>
+    <div id="data-meter">
+        <!-- TODO: get meter value -->
+        <div class="column column-low">
+            <p>[0-50)</p>
+        </div>
+        <div class="column column-medium">
+            <p>[0-50)</p>
+        </div>
+        <div class="column column-high">
+            <p>[0-50)</p>
+        </div>
+    </div>
     <div class="bottom-wrap">
         <ul class="buttons">
             <li>
@@ -51,6 +63,7 @@
     var mapName = {{ map.mapName|tojson }}
     var currentLat = {{ currentLat|tojson }}
     var currentLong = {{ currentLong|tojson }}
+    var mapid = {{ map.id|tojson }}
 </script>
 <script type='text/javascript' src="{{ url_for('static', filename='map.js') }}"></script>
 {% endblock %}

@@ -57,13 +57,32 @@
     margin: 0.1em;
     height: 15px;
     width: 15px;
-    /* background-color: greenyellow; */
     border-radius: 50%;
 }
 
 #map { 
-    height: 84vh; 
+    height: 80vh; 
     margin-top: 8vh;
+}
+
+#data-meter {
+    display: grid;
+    grid-template-columns: repeat(3, 33.3%);
+    height: 4vh;
+}
+.column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.column-low {
+    background-color: green;
+}
+.column-medium {
+    background-color: yellow;
+}
+.column-high {
+    background-color: red;
 }
 
 .buttons {
@@ -92,7 +111,7 @@
 
 .buttons li a {
     width: 120px;
-    height: 50px;
+    height: 7vh;
 }
 
 .btn-intable {
