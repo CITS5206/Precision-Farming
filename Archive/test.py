@@ -25,6 +25,7 @@ def sensor_value():
 
 
 def gps_value():
+    list_gps=[]
     with open('./Archive/Logs/gps_log.txt') as f:
         lines=f.readlines()
         
@@ -32,8 +33,14 @@ def gps_value():
             if(i%2 == 0):
                 nmeaobj = pynmea2.parse(lines[i].strip())           
                                     
-                print(("{} {} ".format(nmeaobj.latitude,nmeaobj.longitude)+ "\n"))
-                time.sleep(1)
+                list_gps.append(str("{} {} ".format(nmeaobj.latitude,nmeaobj.longitude)+"\n"))
+
+        with open("gpsdata_log.txt",'w') as outfile:
+                                
+            outfile.write(str(list_gps))
+
+            outfile.close()
+                
 
 
 
@@ -57,14 +64,14 @@ def function2():
 
 
 
-#gps_value()
+gps_value()
 
 
-main_thread= Thread(target=function1)
-main_thread.start()
+# main_thread= Thread(target=function1)
+# main_thread.start()
 
-sub_thread=Thread(target=function2)
-sub_thread.start()
+# sub_thread=Thread(target=function2)
+# sub_thread.start()
 
 
 
