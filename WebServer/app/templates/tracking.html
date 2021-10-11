@@ -3,6 +3,13 @@
 {% block content %}
 <div class="content">
     <div class="upper-wrap">
+        <div>
+            <ul class="buttons">
+                <li>
+                    <a href="{{ url_for('map') }}" class="btn">Map</a>
+                </li>
+            </ul>
+        </div>
         <!-- <div class="devices">
             <div class="device">
                 {% if sensor == "up" %}
@@ -21,9 +28,7 @@
                 <p class="device-name">GPS</p>
             </div>
         </div>
-        
         <div class="ABpoint">
-            
             <p class="point-coordinate">A: {{ pointA }} </p>
             <p class="point-coordinate">B: {{ pointB }}</p>
         </div> -->
@@ -33,19 +38,7 @@
         </div>
     </div>
     <div id="map"></div>
-    <div id="data-meter">
-        <!-- TODO: get meter value -->
-        <div class="column column-low">
-            <p>[0-50)</p>
-        </div>
-        <div class="column column-medium">
-            <p>[0-50)</p>
-        </div>
-        <div class="column column-high">
-            <p>[0-50)</p>
-        </div>
-    </div>
-    <div class="bottom-wrap">
+    <!-- <div class="bottom-wrap">
         <ul class="buttons">
             <li>
                 <a href="#" class="btn" id="btn-track" onclick="tracking()">View live</a>
@@ -54,11 +47,14 @@
                 <a href="{{ url_for('map') }}" class="btn">Map</a>
             </li>
         </ul>
-    </div>
+    </div> -->
 </div>
 <script type="text/javascript">
-    var mapName = {{ map.mapName|tojson }}
+    var mapName = {{ mapName|tojson }}
     var currPos = {{ currPos|tojson }}
+    var measure = {{ measure|tojson }}
 </script>
+<script type='text/javascript' src="{{ url_for('static', filename='/leaflet-1.7.1/heatmap.js') }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='/leaflet-1.7.1/leaflet-heatmap.js') }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='map.js') }}"></script>
 {% endblock %}

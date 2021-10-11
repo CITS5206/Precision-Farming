@@ -9,13 +9,14 @@
 <table class ="list">
     <tr class ="list">
         <th class ="list">Field</th>
-        <th class ="list">Operation</th>
+        <th class ="list">Measurement</th>
     </tr>
     {% for m in lstMap %}
     <tr class ="list">        
-        <td class ="list">{{ m.mapName }} </td>
-        <td class ="list">
-            <a href="{{ url_for('tracking', mapid = m.id) }}" class="btn-intable">Use</a>
+        <td class ="list">{{ m }} </td>
+        <td class ="list list-Measurement">
+            <a href="{{ url_for('tracking', mapName = m, measure = 'H1ppt') }}" class="btn-intable">H1ppt</a>
+            <a href="{{ url_for('tracking', mapName = m, measure = 'P1ppt') }}" class="btn-intable">P1ppt</a>
         </td>
     </tr>
     {% endfor %}

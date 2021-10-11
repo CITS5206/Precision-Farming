@@ -67,15 +67,10 @@
 }
 
 #map { 
-    height: 84vh; 
+    height: 92vh; 
     margin-top: 8vh;
 }
 
-#data-meter {
-    display: grid;
-    grid-template-columns: repeat(3, 33.3%);
-    height: 4vh;
-}
 .column {
     display: flex;
     align-items: center;
@@ -132,18 +127,21 @@
 
 table {
     margin-left: auto;
-    margin-right: auto;
-  
+    margin-right: auto; 
     border-collapse: collapse;
-    
 }
-table.list{
-width: 50%;
 
+table.list{
+    width: 50%;
 }
+
 td.list, th.list {
-border: 1px solid #ddd;
-padding: 8px;
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.list-Measurement {
+    display: flex;
 }
 
 tr.list:nth-child(even){background: #EEEEEE;}
@@ -157,4 +155,5 @@ padding-bottom: 12px;
 text-align: left;
 background-color: #4E5DE8;
 color: white;
+text-align: center;
 }
