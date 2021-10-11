@@ -4,12 +4,16 @@ import itertools
 import time
 import serial
 import csv
+import sys
 
-f1 = open("dualem-data.txt",'r')
-f2 = open("gps-data.txt",'r')
-with open("./new/dualem-gps.csv",'a') as outfile:
-    writer = csv.writer(outfile)
-    writer.writerow(
+
+def main(SENSOR ='/dev/tty.usbserial-1110' ):
+
+    f1 = open("dualem-data.txt",'r')
+    f2 = open("gps-data.txt",'r')
+    with open("./output/dualem-gps.csv",'a') as outfile:
+        writer = csv.writer(outfile)
+        writer.writerow(
         (
          'Latitude',
          'Longitude',
@@ -37,64 +41,65 @@ with open("./new/dualem-gps.csv",'a') as outfile:
 
 
 
-dualem = iter(f1.readlines())
-gps = iter(f2.readlines())
-f1.close()
-f2.close()
-outfile.close()
+    dualem = iter(f1.readlines())
+    gps = iter(f2.readlines())
+    f1.close()
+    f2.close()
+    outfile.close()
 
 
-readSensor, readGPS, compile2 = True,True,False
-firstH = False
+    readSensor, readGPS, compile2 = True,True,False
+    firstH = False
 
-SENSOR='/dev/tty.usbserial-1110'
-ser = serial.Serial(SENSOR, 
+    ser = serial.Serial(SENSOR, 
                                 baudrate=9600, timeout=1, 
                                 bytesize=serial.EIGHTBITS, 
                                 parity=serial.PARITY_NONE, 
                                 stopbits=serial.STOPBITS_ONE)
-if ser.is_open:
-    while True:
+    if ser.is_open:
+        while True:
     
-        checklist=[]
-        output_list =[]
-        if readSensor:
-            try:
-                nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
-                if not firstH:
-                    if nmeaobj.data[0] == 'H':
-                        firstH = True
+            checklist=[]
+            output_list =[]
+            if readSensor:
+                try:
+                    nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
+                    if not firstH:
+                        if nmeaobj.data[0] == 'H':
+                            firstH = True
+                            for i in range(4):
+                                checklist.append(nmeaobj.data)
+                                nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
+                        g_data = pynmea2.parse(gps.__next__())
+                        checklist.append([g_data.latitude, g_data.longitude])
+                    else:
                         for i in range(4):
                             checklist.append(nmeaobj.data)
                             nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
-                    g_data = pynmea2.parse(gps.__next__())
-                    checklist.append([g_data.latitude, g_data.longitude])
-                else:
-                    for i in range(4):
-                        checklist.append(nmeaobj.data)
-                        nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
-                    g_data = pynmea2.parse(gps.__next__())
-                    checklist.append([g_data.latitude, g_data.longitude])
+                        g_data = pynmea2.parse(gps.__next__())
+                        checklist.append([g_data.latitude, g_data.longitude])
 
-            except Exception as e:
-                print(e)
-                continue
-        for k in checklist:
-            print(k)
+                except Exception as e:
+                    print(e)
+                    continue
+            for k in checklist:
+                print(k)
         #print(len(checklist))
-        if len(checklist) ==5:
-            h = checklist[0]
-            i = checklist[1]
-            a = checklist[2]
-            b = checklist[3]
-            g = checklist[4]
-            output_list = g+ h[1:] + i[1:] + a[1:] + b[1:]
-            with open("./new/dualem-gps.csv",'a') as outfile:
-                writer = csv.writer(outfile)
-                writer.writerow(output_list)
+            if len(checklist) ==5:
+                h = checklist[0]
+                i = checklist[1]
+                a = checklist[2]
+                b = checklist[3]
+                g = checklist[4]
+                output_list = g+ h[1:] + i[1:] + a[1:] + b[1:]
+                with open("./outpu/dualem-gps.csv",'a') as outfile:
+                    writer = csv.writer(outfile)
+                    writer.writerow(output_list)
             
     
-    
+if __name__ == "__main__":
+    SENSOR = sys.argv[1]
+    main(SENSOR)
 
 
 

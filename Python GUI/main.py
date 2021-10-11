@@ -78,7 +78,7 @@ class GUI():
             self.gps_port = StringVar()
             self.status = StringVar()
             self.proc = None
-            self.LEGAL_OPTIONS= ['/dev/tty.usbserial-AL02V3VW','/dev/ttyUSB-AL02V3VW']
+            self.LEGAL_OPTIONS= ['/dev/tty.usbserial-AL02V3VW','/dev/ttyUSB-AL02V3VW','/dev/tty.usbserial-1110']
 
     def GUISetupOptions(self):
 
@@ -288,8 +288,8 @@ class GUI():
     
     def readSensor(self):
 
-        if self.port.get() == self.LEGAL_OPTIONS:
-            self.proc = subprocess.Popen(['python3','readSENSOR.py', self.port.get()]) 
+        if self.port.get() in self.LEGAL_OPTIONS:
+            self.proc = subprocess.Popen(['python3','main_read.py', self.port.get()]) 
              # Run other script - doesn't wait for it to finish.
         print(self.proc.pid)
         if self.proc.pid:
