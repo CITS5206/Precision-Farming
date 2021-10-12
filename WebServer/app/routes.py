@@ -3,14 +3,17 @@ from flask      import render_template, redirect, url_for, request
 from app.models import Map
 import json
 import os
+import socket
 
 @app.route('/tracking/')
 def tracking():
     mapName = request.args.get('mapName')
     measure = request.args.get('measure')
     currPos = getJson()['live']
+    ip=getIP()
     return render_template('tracking.html', title='PrecisionFarming-Tracking', 
-                            measure = measure, currPos = currPos, mapName=mapName)
+                            measure = measure, currPos = currPos, mapName=mapName,
+                            ip=ip)
 
 
 @app.route('/index')
@@ -41,3 +44,15 @@ def getMapNames():
         if not e.startswith('.'):
             maps.append(e)
     return maps
+
+def getIP():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP

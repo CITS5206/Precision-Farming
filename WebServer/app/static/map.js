@@ -5,8 +5,8 @@
 * By Harper Wu, Kiet Hoang
  */
 var map = L.map('map').setView(currPos, 18.0);
-
-var baseLayer = L.tileLayer('http://localhost:5000/static/maps/'+ mapName +'/{z}/{x}/{y}.png', {
+// To load the local map, need to access server machine ip instead of localhost in broswer
+var baseLayer = L.tileLayer('http://'+ ip +':5000/static/maps/'+ mapName +'/{z}/{x}/{y}.png', {
                     minZoom: 8,
                     maxZoom: 20,
                     tms: false,
