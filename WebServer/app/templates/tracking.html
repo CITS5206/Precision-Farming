@@ -8,53 +8,28 @@
                 <li>
                     <a href="{{ url_for('map') }}" class="btn">Map</a>
                 </li>
+                <li>
+                    <a href="#" class= "btn" id="saveImage">Stop and Save</a>
+                </li>
             </ul>
         </div>
-        <!-- <div class="devices">
-            <div class="device">
-                {% if sensor == "up" %}
-                    <div class="device-status-shape" style="background-color: yellowgreen;"></div>
-                {% else %}
-                    <div class="device-status-shape" style="background-color: red;"></div>
-                {% endif %}
-                <p class="device-name">Sensor</p>
-            </div>
-            <div class="device">
-                {% if gps == "up" %}
-                    <div class="device-status-shape" style="background-color: yellowgreen;"></div>
-                {% else %}
-                    <div class="device-status-shape" style="background-color: red;"></div>
-                {% endif %}
-                <p class="device-name">GPS</p>
-            </div>
-        </div>
-        <div class="ABpoint">
-            <p class="point-coordinate">A: {{ pointA }} </p>
-            <p class="point-coordinate">B: {{ pointB }}</p>
-        </div> -->
         <div class="current-location">
             <p>Current Location</p>
             <p id='current-position'>{{ currPos[0] }}, {{ currPos[1] }}</p>
         </div>
     </div>
     <div id="map"></div>
-    <!-- <div class="bottom-wrap">
-        <ul class="buttons">
-            <li>
-                <a href="#" class="btn" id="btn-track" onclick="tracking()">View live</a>
-            </li>
-            <li>
-                <a href="{{ url_for('map') }}" class="btn">Map</a>
-            </li>
-        </ul>
-    </div> -->
 </div>
 <script type="text/javascript">
     var mapName = {{ mapName|tojson }}
     var currPos = {{ currPos|tojson }}
     var measure = {{ measure|tojson }}
 </script>
+
+<script src="{{ url_for('static', filename='/scripts/dom-to-image.js') }}"></script>
+<script src="{{ url_for('static', filename='/scripts/FileSaver.js') }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='/leaflet-1.7.1/heatmap.js') }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='/leaflet-1.7.1/leaflet-heatmap.js') }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='map.js') }}"></script>
+
 {% endblock %}
