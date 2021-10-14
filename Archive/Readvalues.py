@@ -29,8 +29,7 @@ from serial.serialutil import PortNotOpenError
 
 import serial.tools.list_ports
 
-#check the file existing or not 
-# if existing pass parameter a or pass parameter w to csv write
+
 
 def check_file_exist(filepath):
     
@@ -43,8 +42,8 @@ def check_file_exist(filepath):
         except Exception as e: 
             print(e)
 
-
-
+#uncomment this line while connecting both sensors and intergrating
+#def read_sensor(sensor_port,gps_port,sensor_rate,gps_rate):
 def read_sensor():
 
     file_name="./dualem-gps_"+str(date.today())+".csv"
@@ -86,12 +85,17 @@ def read_sensor():
 
     try:
 
+        #uncomment this 
+        #sensor= serial.Serial(sensor_port, sensor_rate, timeout=1, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+
         sensor= serial.Serial('/dev/tty.usbserial-120', 9600, timeout=1, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        #uncomment this
         #gps=serial.Serial(gps_port, gps_rate, timeout=1)
 
         
         first_elem=False
 
+        #comment this
         gps=[-31.977426123666667, 115.81717328233333]
         
         while True:
@@ -137,7 +141,7 @@ def read_sensor():
                 b = sensor_list[3]
                 g = sensor_list[4]
                 csv_list =  g + h[1:] + i[1:] + a[1:] + b[1:]
-                #print(len(sensor_list))
+               
 
                 with open(file_name,"a") as outfile:
                     writer = csv.writer(outfile)
