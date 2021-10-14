@@ -11,7 +11,7 @@
 
 * Author: Harper Wu
 
-* Co-Author: Kiet Hoang
+* Co-Author: Tuan Kiet Hoang
 
 * Date Created: 23-09-2021
 
