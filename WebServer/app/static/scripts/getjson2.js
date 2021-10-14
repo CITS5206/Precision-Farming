@@ -1,39 +1,32 @@
+/*
+The University of Western Australia : 2021
+CITS5206 Professional Computing
+Group: Precision Farming
+
+Source Code
+Author: Tuan Kiet Hoang
+Co-Author: 
+Date Created: 30/09/2021    
+Last Modified: 04/10/2021
+Version: [Major Versions needs to be pushed in Github!]
+State : [Beta, Stable]
+*/
+
 var latlngs = [];
+var pos;
 
-var getJson = async (callback) => {
-    var res = await fetch('/test2', {cache: "no-cache"});
-    var resJson = await res.json();
-    //console.log(resJson);
-    latlngs = resJson;
-    console.log(latlngs);
-    callback();
-    
-    // .then(function (text) {
-    //     console.log('GET response:');
-    //     console.log(text); 
-    // });
-};
-
-// var getlatlongjson = function () {
-//     var polylist = [];
-    
-//     getJson().then(function (result) {
-//         var response = JSON.parse(result);
+var getJson = (callback) => {
+    fetch('/getJson', {cache: "no-cache"})
+    .then((response) => response.json())
+    .then((resObj) => {
+        latlngs = resObj.pos;
+        pos = resObj.currentPos;
+    });
         
-//         Object.keys(response).forEach(function(key) {                   
-//             var latlonglist = [];
-//             latlonglist[0] = parseFloat(key);
-//             latlonglist[1] = parseFloat(response[key]["LONd"]);
-//             polylist.push(latlonglist);
-//             //console.log(latlonglist);
-//             //console.log(polylist);          
-            
-//             //console.log('lat: ' + key + ', long: ' + response[key]["LONd"]);
-//         });
-//         //console.log(polylist);        
-//     });
-//     return polylist
-// };
-
-// //getlatlongjson();
-//setInterval(getJson, 2000);
+    //check correct coordinates in browser's console
+    //console.log(pos);
+    //console.log(latlngs);
+    
+    //draw polyline when done
+    callback();
+};
