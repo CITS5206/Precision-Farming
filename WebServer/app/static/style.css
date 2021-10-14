@@ -148,6 +148,11 @@
     padding: 1em;
 }
 
+.warning {
+    padding: 1em;
+    color: red;
+}
+
 table {
     margin-left: auto;
     margin-right: auto; 

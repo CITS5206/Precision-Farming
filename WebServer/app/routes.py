@@ -26,17 +26,15 @@ from app        import app
 from flask      import render_template, request
 import json
 import os
-import socket
+from pathlib    import Path
 
 @app.route('/tracking/')
 def tracking():
     mapName = request.args.get('mapName')
     measure = request.args.get('measure')
     currPos = getJson()['live']
-    ip=getIP()
     return render_template('tracking.html', title='PrecisionFarming-Tracking', 
-                            measure = measure, currPos = currPos, mapName=mapName,
-                            ip=ip)
+                            measure = measure, currPos = currPos, mapName=mapName)
 
 
 @app.route('/index')
@@ -61,23 +59,15 @@ def getJson(path='./leaflet-demo/d.json'):
     return data
 
 def getMapNames():
-    # TODO: Try Catch path not exist
     # TODO: Test@Clariza
+    dir = './app/static/maps'
+    Path(dir).mkdir(parents=True, exist_ok=True)
     maps = []
-    entries = os.listdir('./app/static/maps')
-    for e in entries:
-        if not e.startswith('.'):
-            maps.append(e)
-    return maps
-
-def getIP():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        # doesn't even have to be reachable
-        s.connect(('10.255.255.255', 1))
-        IP = s.getsockname()[0]
-    except Exception:
-        IP = '127.0.0.1'
-    finally:
-        s.close()
-    return IP
+        entries = os.listdir(dir)
+        for e in entries:
+            if not e.startswith('.'):
+                maps.append(e)
+    except:
+        pass
+    return maps
