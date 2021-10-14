@@ -23,54 +23,73 @@
 import pynmea2
 import serial
 import csv
+import os
+from datetime import date
+from serial.serialutil import PortNotOpenError
 
+import serial.tools.list_ports
 
 #check the file existing or not 
 # if existing pass parameter a or pass parameter w to csv write
 
-# check the port numbers valid or not
+def check_file_exist(filepath):
+    
+        try:
+            if os.path.isfile(filepath):
+                return True
+            else:
+                return False
+    
+        except Exception as e: 
+            print(e)
 
-# add time stamp to the file name 
 
 
 def read_sensor():
 
+    file_name="./dualem-gps_"+str(date.today())+".csv"
 
-    with open("./dualem-gps.csv",'a') as outfile:
-        writer = csv.writer(outfile)
-        writer.writerow(
-        (
-         'Latitude',
-         'Longitude',
-         'Timestamp [HhMmSs]',  
-         'HCP conductivity of 0.5m array [mS/m]',    
-         'HCP inphase of 0.5m array [ppt]',  
-         'PRP conductivity of 0.5m array [mS/m]',
-         'PRP inphase of 0.5m array [ppt]',  
-         'HCP conductivity of 1m array [mS/m]',  
-         'HCP inphase of 1m array [ppt]',    
-         'PRP conductivity of 1m array [mS/m]',  
-         'PRP inphase of 1m array [ppt]',    
-         'Voltage [V]'   ,
-         'Temperature [deg]',   
-         'Pitch [deg]',  
-         'Roll [deg]',   
-         'Acceleration X [gal]', 
-         'Acceleration Y [gal]', 
-         'Acceleration Z [gal]',    
-         'Magnetic field X [nT]',    
-         'Magnetic field Y [nT]',    
-         'Magnetic field Z [nT]',    
-         'Temperature [deg]')
-         )
-        outfile.close()
+    if check_file_exist(file_name):
+        write_mode = "a"
+
+    else:
+        write_mode="w"
+       
+        with open(file_name,write_mode) as outfile:
+            writer = csv.writer(outfile)
+            writer.writerow(
+            (
+            'Latitude',
+            'Longitude',
+            'Timestamp [HhMmSs]',  
+            'HCP conductivity of 0.5m array [mS/m]',    
+            'HCP inphase of 0.5m array [ppt]',  
+            'PRP conductivity of 0.5m array [mS/m]',
+            'PRP inphase of 0.5m array [ppt]',  
+            'HCP conductivity of 1m array [mS/m]',  
+            'HCP inphase of 1m array [ppt]',    
+            'PRP conductivity of 1m array [mS/m]',  
+            'PRP inphase of 1m array [ppt]',    
+            'Voltage [V]'   ,
+            'Temperature [deg]',   
+            'Pitch [deg]',  
+            'Roll [deg]',   
+            'Acceleration X [gal]', 
+            'Acceleration Y [gal]', 
+            'Acceleration Z [gal]',    
+            'Magnetic field X [nT]',    
+            'Magnetic field Y [nT]',    
+            'Magnetic field Z [nT]',    
+            'Temperature [deg]')
+            )
+            outfile.close()
 
     try:
 
         sensor= serial.Serial('/dev/tty.usbserial-120', 9600, timeout=1, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
         #gps=serial.Serial(gps_port, gps_rate, timeout=1)
 
-        sensor_flag=True
+        
         first_elem=False
 
         gps=[-31.977426123666667, 115.81717328233333]
@@ -120,20 +139,18 @@ def read_sensor():
                 csv_list =  g + h[1:] + i[1:] + a[1:] + b[1:]
                 #print(len(sensor_list))
 
-                with open("./dualem-gps.csv",'a') as outfile:
+                with open(file_name,"a") as outfile:
                     writer = csv.writer(outfile)
                     writer.writerow(csv_list)    
-
-
                     outfile.close()
             
     except Exception as e:
         print(e)
 
-
 read_sensor()
-        
-        
+
+
+
 
 
 
