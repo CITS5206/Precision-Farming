@@ -1,4 +1,5 @@
 
+from tkinter.constants import OUTSIDE
 import pynmea2
 import itertools
 import time
@@ -7,11 +8,11 @@ import csv
 import sys
 
 
-def main(SENSOR ='/dev/tty.usbserial-1110' ):
-
+def main(SENSOR ='/dev/tty.usbserial-1110', path=''):
+    op = path
     f1 = open("dualem-data.txt",'r')
     f2 = open("gps-data.txt",'r')
-    with open("./output/dualem-gps.csv",'a') as outfile:
+    with open(f"{op}",'a') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(
         (
@@ -49,7 +50,7 @@ def main(SENSOR ='/dev/tty.usbserial-1110' ):
 
 
     readSensor, readGPS, compile2 = True,True,False
-    firstH = False
+    
 
     ser = serial.Serial(SENSOR, 
                                 baudrate=9600, timeout=1, 
@@ -58,24 +59,18 @@ def main(SENSOR ='/dev/tty.usbserial-1110' ):
                                 stopbits=serial.STOPBITS_ONE)
     if ser.is_open:
         while True:
-    
+            #firstH = False
             checklist=[]
             output_list =[]
             if readSensor:
                 try:
                     nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
-                    if not firstH:
-                        if nmeaobj.data[0] == 'H':
-                            firstH = True
-                            for i in range(4):
+                    #if not firstH:
+                    if nmeaobj.data[0] == 'H':
+                            #firstH = True
+                        for i in range(4):
                                 checklist.append(nmeaobj.data)
                                 nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
-                        g_data = pynmea2.parse(gps.__next__())
-                        checklist.append([g_data.latitude, g_data.longitude])
-                    else:
-                        for i in range(4):
-                            checklist.append(nmeaobj.data)
-                            nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
                         g_data = pynmea2.parse(gps.__next__())
                         checklist.append([g_data.latitude, g_data.longitude])
 
@@ -91,15 +86,16 @@ def main(SENSOR ='/dev/tty.usbserial-1110' ):
                 a = checklist[2]
                 b = checklist[3]
                 g = checklist[4]
-                output_list = g+ h[1:] + i[1:] + a[1:] + b[1:]
-                with open("./outpu/dualem-gps.csv",'a') as outfile:
+                output_list = g+ h[1:] + i[2:] + a[1:] + b[1:]
+                with open(f"{op}",'a') as outfile:
                     writer = csv.writer(outfile)
                     writer.writerow(output_list)
             
     
 if __name__ == "__main__":
     SENSOR = sys.argv[1]
-    main(SENSOR)
+    path = sys.argv[2]
+    main(SENSOR,path)
 
 
 
