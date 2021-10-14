@@ -53,12 +53,28 @@ def map():
     return render_template('map.html', title='PrecisionFarming-Map', lstMap=lstMap)
 
 @app.route('/getJson')
-def getJson(path='./leaflet-demo/d.json'):
+def getJson(path='./app/static/liveFeed/d.json'):
+    '''
+    getMapNames
+        :parameters:
+            path (default: './app/static/liveFeed/d.json')
+        
+        :returns:
+            file content in json format
+    '''
     f = open(path, 'r')
     data = json.load(f)
     return data
 
 def getMapNames():
+    '''
+    getMapNames
+        :parameters:
+            None
+        
+        :returns:
+            list, folder names can be used as map names
+    '''
     # TODO: Test@Clariza
     dir = './app/static/maps'
     Path(dir).mkdir(parents=True, exist_ok=True)
