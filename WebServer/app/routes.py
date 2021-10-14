@@ -1,6 +1,29 @@
+'''
+ The University of Western Australia : 2021
+
+* CITS5206 Professional Computing
+
+* Group: Precision Farming
+
+
+
+* Source Code
+
+* Author: Harper Wu
+
+* Co-Author: Kiet Hoang
+
+* Date Created: 23-09-2021
+
+* Last Modified: 13-10-2021
+
+* Version: 1.0
+
+* State : Stable 
+'''
+
 from app        import app
-from flask      import render_template, redirect, url_for, request
-from app.models import Map
+from flask      import render_template, request
 import json
 import os
 import socket
@@ -38,6 +61,8 @@ def getJson(path='./leaflet-demo/d.json'):
     return data
 
 def getMapNames():
+    # TODO: Try Catch path not exist
+    # TODO: Test@Clariza
     maps = []
     entries = os.listdir('./app/static/maps')
     for e in entries:
