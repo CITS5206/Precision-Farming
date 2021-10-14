@@ -1,3 +1,17 @@
+/*
+The University of Western Australia : 2021
+CITS5206 Professional Computing
+Group: Precision Farming
+
+Source Code
+Author: Tuan Kiet Hoang
+Co-Author: 
+Date Created: 04/10/2021    
+Last Modified: 04/10/2021
+Version: [Major Versions needs to be pushed in Github!]
+State : [Beta, Stable]
+*/
+
 var latlngs = [];
 var pos;
 

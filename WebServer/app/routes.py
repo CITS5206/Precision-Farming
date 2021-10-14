@@ -1,3 +1,17 @@
+'''
+The University of Western Australia : 2021
+CITS5206 Professional Computing
+Group: Precision Farming
+
+Source Code
+Author: Tuan Kiet Hoang
+Co-Author: 
+Date Created: 1/09/2021    
+Last Modified: 04/10/2021
+Version: [Major Versions needs to be pushed in Github!]
+State : [Beta, Stable]
+'''
+
 from app import app
 from flask import render_template # could be useful redirect, url_for, flash, request
 import json
