@@ -1,3 +1,26 @@
+/* 
+* The University of Western Australia : 2021
+
+* CITS5206 Professional Computing
+
+* Group: Precision Farming
+
+
+
+* Source Code
+
+* Author: Harper Wu
+
+* Date Created: 23-09-2021
+
+* Last Modified: 13-10-2021
+
+* Version: 1.0
+
+* State : Stable  
+*/
+
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -123,6 +146,11 @@
 /* Page Map */
 .title-map {
     padding: 1em;
+}
+
+.warning {
+    padding: 1em;
+    color: red;
 }
 
 table {

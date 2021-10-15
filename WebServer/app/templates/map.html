@@ -1,11 +1,34 @@
+<!-- 
+* The University of Western Australia : 2021
+
+* CITS5206 Professional Computing
+
+* Group: Precision Farming
+
+
+
+* Source Code
+
+* Author: Harper Wu
+
+* Date Created: 23-09-2021
+
+* Last Modified: 13-10-2021
+
+* Version: 1.0
+
+* State : Stable 
+-->
+
+
 {% extends "base.html" %}
 
 {% block content %}
 <h1 class="title-map">Map</h1>
 
-<!-- TODO: Add a button to update map list -->
-<!-- Funciton: search folder name under "map" folder, update database -->
-
+{% if lstMap|length == 0 %}
+<p class ="warning">No avalianle maps, please place map folders "Maps" folder</p>
+{% else %}
 <table class ="list">
     <tr class ="list">
         <th class ="list">Field</th>
@@ -21,4 +44,5 @@
     </tr>
     {% endfor %}
 </table>
+{% endif %}
 {% endblock %}

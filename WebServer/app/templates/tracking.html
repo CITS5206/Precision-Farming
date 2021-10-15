@@ -1,3 +1,25 @@
+<!-- 
+* The University of Western Australia : 2021
+
+* CITS5206 Professional Computing
+
+* Group: Precision Farming
+
+
+
+* Source Code
+
+* Author: Harper Wu
+
+* Date Created: 23-09-2021
+
+* Last Modified: 13-10-2021
+
+* Version: 1.0
+
+* State : Stable 
+-->
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -24,7 +46,6 @@
     var mapName = {{ mapName|tojson }}
     var currPos = {{ currPos|tojson }}
     var measure = {{ measure|tojson }}
-    var ip = {{ ip|tojson }}
 </script>
 
 <script src="{{ url_for('static', filename='/scripts/dom-to-image.js') }}"></script>
