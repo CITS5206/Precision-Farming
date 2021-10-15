@@ -15,9 +15,9 @@
 
 * Date Created: 23-09-2021
 
-* Last Modified: 13-10-2021
+* Last Modified: 15-10-2021
 
-* Version: 1.0
+* Version: 1.1
 
 * State : Stable 
 '''
@@ -55,12 +55,12 @@ def map():
 @app.route('/getJson')
 def getJson(path='./app/static/liveFeed/d.json'):
     '''
-    getMapNames
+    getJson
         :parameters:
-            path (default: './app/static/liveFeed/d.json')
+            string, path of th file (default: './app/static/liveFeed/d.json')
         
         :returns:
-            file content in json format
+            json, file content
     '''
     f = open(path, 'r')
     data = json.load(f)
@@ -68,21 +68,24 @@ def getJson(path='./app/static/liveFeed/d.json'):
 
 def getMapNames():
     '''
-    getMapNames
+    getMapNames: Search dir, use folder name as map name, return folder names in list
         :parameters:
             None
         
         :returns:
-            list, folder names can be used as map names
+            list, folder names
     '''
     # TODO: Test@Clariza
     dir = './app/static/maps'
+    # Create directory if not exitst
     Path(dir).mkdir(parents=True, exist_ok=True)
     maps = []
     try:
+        # List all entries in dir
         entries = os.listdir(dir)
         for e in entries:
-            if not e.startswith('.'):
+            # only include folders
+            if os.path.isdir(os.path.join(dir, e)):
                 maps.append(e)
     except:
         pass
