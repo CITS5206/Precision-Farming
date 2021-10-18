@@ -12,6 +12,10 @@
 # Version:  2.0
 # State :  Beta
 
+# References:
+
+# [1] - https://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python (Oct,2021)
+
 
 from posix import listdir
 import re
@@ -42,8 +46,8 @@ class GUI():
             None
         :methods:
             confirm_selection(),
-            serial_ports(),
-            openFolder(),
+            scanPorts(),
+            saveProject(),
             readSensor(),
             stop_sensor_process(),
         
@@ -80,11 +84,10 @@ class GUI():
 
             #INITIALIZE GUI WINDOW
             self.WINDOW = Tk()
-            self.WINDOW.title("eFarmer")
+            self.WINDOW.title("E.M.I Toolkit")
             self.WINDOW.geometry('640x460')
             self.WINDOW.minsize(width=640,height=460)
             self.WINDOW.maxsize(width=640,height=460)
-            self.WINDOW.iconbitmap(r"logo.ico")
         
     def GUIFrame(self):
             self.MAINFRAME = Frame(self.WINDOW)
@@ -109,14 +112,14 @@ class GUI():
 
             
             # PROGRAM VARIABLES
-            self.DUALEM_PORT, self.GPS_PORT, self.PROGRAM_STATUS = StringVar(), StringVar() , StringVar()
-            self.LEGAL_OPTIONS= ['/dev/tty.usbserial-AL02V3VW','/dev/ttyUSB-AL02V3VW','/dev/tty.usbserial-1110']
+            self.DUALEM_PORT,self.DUALEM_BAUD,self.DUALEM_FREQ = StringVar() ,StringVar(), StringVar()
+            self.GPS_PORT, self.GPS_BAUD,self.GPS_FREQ = StringVar(), StringVar() , StringVar()
+            self.PROGRAM_STATUS = StringVar()
+            
+            # self.LEGAL_OPTIONS= ['/dev/tty.usbserial-AL02V3VW','/dev/ttyUSB-AL02V3VW','/dev/tty.usbserial-1110']
             self.LEGAL_BAUD_RATES = ['BAUD RATE','4800', '9600', '14400', '19200', '38400', '57600', '115200', '128000' , '256000']
-            self.LEGAL_FREQ_RATES = ['FREQUENCY (M.P.S)','1/10', '1/5', '1/2', '1 (Default)', '2', '5', '10']
-            self.DUALEM_BAUD = 9600
-            self.DUALEM_FREQ = None
-            self.GPS_BAUD = 38400
-            self.GPS_FREQ = None
+            self.LEGAL_FREQ_RATES = ['FREQUENCY (M.P.S)','1/10', '1/5', '1/2', '1', '2', '5', '10']
+
             self.PROGRAM_STATUS_OP = False
 
     def GUISetupOptions(self):
@@ -125,28 +128,28 @@ class GUI():
             self.SETUP_LABEL = ttk.Label(self.MAINFRAME, text="SETUP OPTIONS",justify=tkinter.CENTER,font=self.label_font)
         
             # SETUP OPTIONS --> SCAN AND VERIY 
-            self.SCAN_BTN = Button(self.MAINFRAME, text="SCAN PORTS", command=self.serial_ports,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.CONFIRM_BTN = Button(self.MAINFRAME, text="CONFIRM SELECTION", command=self.confirm_selection,state="disabled",width=19,pady=2,padx=2, bg="#c90231")
+            self.SCAN_BTN = Button(self.MAINFRAME, text="SCAN PORTS", command=self.scanPorts,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.CONFIRM_BTN = Button(self.MAINFRAME, text="CONFIRM SELECTION", command=self.GUISanityCheck,state="disabled",width=19,pady=2,padx=2, bg="#c90231")
         
             # SETUP OPTIONS --> SCAN DUALEM PORT
             #self.PORT_LABEL = ttk.Label(self.MAINFRAME, text="PORT NAME",justify=tkinter.LEFT, width=10)
             self.DUALEM_PORT_OPTION_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.DUALEM_PORT, state='disabled',width=self.combo_box_width)
             self.DUALEM_PORT_OPTION_BTN.set("SENSOR PORT")
 
-            self.DUALEM_PORT_BAUD_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.DUALEM_BAUD,values=self.LEGAL_BAUD_RATES, state='readonly',width=self.combo_box_width)
+            self.DUALEM_PORT_BAUD_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.DUALEM_BAUD,values=self.LEGAL_BAUD_RATES, state='disabled',width=self.combo_box_width)
             self.DUALEM_PORT_BAUD_BTN.set(self.LEGAL_BAUD_RATES[0])
 
-            self.DUALEM_PORT_FREQ_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.DUALEM_FREQ,values=self.LEGAL_FREQ_RATES, state='readonly',width=self.combo_box_width)
+            self.DUALEM_PORT_FREQ_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.DUALEM_FREQ,values=self.LEGAL_FREQ_RATES, state='disabled',width=self.combo_box_width)
             self.DUALEM_PORT_FREQ_BTN.set(self.LEGAL_FREQ_RATES[0])
 
             # SETUP OPTIONS --> SCAN GPS PORT
             self.GPS_PORT_OPTION_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.GPS_PORT, state='disabled',width=self.combo_box_width)
             self.GPS_PORT_OPTION_BTN.set("GPS PORT")
             
-            self.GPS_PORT_BAUD_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.GPS_BAUD,values=self.LEGAL_BAUD_RATES, state='readonly',width=self.combo_box_width)
+            self.GPS_PORT_BAUD_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.GPS_BAUD,values=self.LEGAL_BAUD_RATES, state='disabled',width=self.combo_box_width)
             self.GPS_PORT_BAUD_BTN.set(self.LEGAL_BAUD_RATES[0])
 
-            self.GPS_PORT_FREQ_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.GPS_FREQ,values=self.LEGAL_FREQ_RATES, state='readonly',width=self.combo_box_width)
+            self.GPS_PORT_FREQ_BTN = ttk.Combobox(self.MAINFRAME,textvariable=self.GPS_FREQ,values=self.LEGAL_FREQ_RATES, state='disabled',width=self.combo_box_width)
             self.GPS_PORT_FREQ_BTN.set(self.LEGAL_FREQ_RATES[0])
             # END : SETUP OPTIONS
 
@@ -154,20 +157,16 @@ class GUI():
 
             # START : FILE OPTIONS
             self.FILE_LABEL = ttk.Label(self.MAINFRAME, text="FILE OPTIONS",justify=tkinter.CENTER,font=self.label_font)
-            self.SAVE_PROJECT_BTN = Button(self.MAINFRAME, text="SAVE PROJECT", command=self.openFolder,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y,state='disabled')
-            self.EXISTING_FOLDER_BTN = Button(self.MAINFRAME, text="OUTPUT FOLDER", command=self.openFolder,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y, state="disabled")
-            self.PREV_PROJECTS_BTN = Button(self.MAINFRAME, text="EXPLORE PREVIOUS PROJECTS", command=self.open_prev_projects,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y, state="normal")
+            self.SAVE_PROJECT_BTN = Button(self.MAINFRAME, text="SAVE PROJECT", command=self.saveProject,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y,state='disabled')
+            self.EXISTING_FOLDER_BTN = Button(self.MAINFRAME, text="OUTPUT FOLDER", command=self.saveProject,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y, state="disabled")
+            self.PREV_PROJECTS_BTN = Button(self.MAINFRAME, text="EXPLORE PREVIOUS PROJECTS", command=self.prevProjects,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y, state="normal")
 
             # END : FILE OPTIONS
    
     def GUIControlOPtions(self):
 
-            
-
-
             # START : CONTROL OPTIONS
             self.CONTROL_LABEL = ttk.Label(self.MAINFRAME, text='CONTROL PANEL',justify=tkinter.CENTER,font=self.label_font)
-
             self.START_SENSOR_BTN = Button(self.MAINFRAME,text="START SENSOR READING",command=self.readSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
             self.STOP_SENSOR_BTN = Button(self.MAINFRAME,text="STOP SENSOR READING", command=self.stop_sensor_process, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
             self.READ_OP_DATA = Button(self.MAINFRAME,text="ENABLE LIVE OUTPUT", command=self.open_op_window, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
@@ -175,6 +174,7 @@ class GUI():
             # END : CONTROL OPTIONS
 
     def GUIVisualOptions(self):
+            
             # START: VISUALIZATION
             self.VISUAL_LABEL = ttk.Label(self.MAINFRAME, text='VISUALIZATION',justify=tkinter.CENTER,font=self.label_font)
             self.START_WEBSEVER_BTN = Button(self.MAINFRAME,text="START WEBSERVER",command=self.readSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
@@ -197,8 +197,7 @@ class GUI():
             self.SOFTWARE_VERSION_LABEL.grid(row=25,columnspan=3)
             self.SOFTWARE_VERSION_LABEL.config(text=self.software_version)
             # END
-
-        
+   
     def GUIMasterGrid(self):
             
             # MASTER GRID LAYOUT
@@ -243,30 +242,66 @@ class GUI():
             self.STATUS_INDICATOR_LABEL.grid(row=21,columnspan=3,pady=self.text_padding_y)
             self.STATUS_INDICATOR.grid(row=22,columnspan=3,pady=self.text_padding_y)
 
+    def GUISanityCheck(self):
+        VALID = False
+        if self.DUALEM_PORT.get() == "SENSOR PORT" or  self.GPS_PORT.get() == "GPS PORT":
+            self.PROGRAM_STATUS.set("Command: Scan Ports\nStatus: Port Selection Error")
+            self.MAINFRAME.update()
+            messagebox.showwarning(title="WARNING",message= "PORT SELECTION ERROR")
 
-    def confirm_selection(self):
+        if self.DUALEM_BAUD.get() == 'BAUD RATE' or self.GPS_BAUD.get()== 'BAUD RATE':
+            self.PROGRAM_STATUS.set("Command: Confirm Selection\nStatus: Baud Rate Not Set")
+            self.MAINFRAME.update()
+            messagebox.showwarning(title="WARNING",message= "BAUD RATE NOT SELECTED")
+
+        elif self.DUALEM_FREQ.get()=='FREQUENCY (M.P.S)' or self.GPS_FREQ.get() == 'FREQUENCY (M.P.S)':
+            self.PROGRAM_STATUS.set("Command: Confirm Selection\nStatus: Frequency Rate Not Set")
+            self.MAINFRAME.update()
+            messagebox.showwarning(title="WARNING",message= "Frequency Not Set")
+
+        else:
+            self.PROGRAM_STATUS.set("Command: Confirm Selection\nStatus: OK")
+            print(f"Verifying Settings: {not VALID}")
+            self.GUISelectionToggle()
+
+        try:
+            print(self.DUALEM_BAUD.get())
+            print(self.GPS_BAUD.get())
+            # if isinstance(self.DUALEM_BAUD,int):print(f"{self.DUALEM_BAUD}")
+            # if isinstance(self.GPS_BAUD,int):print(f"{self.GPS_BAUD}")
+        except Exception as e:
+            print(e)
+        
+    def GUISelectionToggle(self):
         FLAG = ["WAIT FOR SCAN","USB NOT DETECTED" ]
         if self.CONFIRM_BTN.cget('text') != "MODIFY SELECTION":
             if not self.DUALEM_PORT.get() in FLAG  and not self.GPS_PORT.get() in FLAG :
                 self.SCAN_BTN['state'] = tkinter.DISABLED
                 self.SAVE_PROJECT_BTN['state'] = tkinter.NORMAL
                 self.DUALEM_PORT_OPTION_BTN.state(['disabled'])
+                self.DUALEM_PORT_BAUD_BTN.state(['disabled'])
+                self.DUALEM_PORT_FREQ_BTN.state(['disabled'])
                 self.GPS_PORT_OPTION_BTN.state(["disabled"])
-                self.CONFIRM_BTN.config(bg='#02c916')
+                self.GPS_PORT_FREQ_BTN.state(['disabled'])
+                self.GPS_PORT_BAUD_BTN.state(['disabled'])
                 self.CONFIRM_BTN.config(text="MODIFY SELECTION")
-                self.PROGRAM_STATUS.set("CMD: CONFIRM SELECTION\nSTATUS: OK")
+                self.PROGRAM_STATUS.set("Command: CONFIRM SELECTION\nSTATUS: OK")
 
         elif self.CONFIRM_BTN.cget('text') == "MODIFY SELECTION":
                 self.SCAN_BTN['state'] = tkinter.NORMAL
                 self.SAVE_PROJECT_BTN['state'] = tkinter.DISABLED
                 self.DUALEM_PORT_OPTION_BTN.state(['!disabled'])
-                self.GPS_PORT_OPTION_BTN.state(["!disabled"])
+                self.DUALEM_PORT_BAUD_BTN.state(['!disabled'])
+                self.DUALEM_PORT_FREQ_BTN.state(['!disabled'])
+                self.GPS_PORT_OPTION_BTN.state(['!disabled'])
+                self.GPS_PORT_FREQ_BTN.state(['!disabled'])
+                self.GPS_PORT_BAUD_BTN.state(['!disabled'])
                 self.CONFIRM_BTN.config(text="CONFIRM SELECTION")
-                self.PROGRAM_STATUS.set("CMD: MODIFY SELECTION\nSTATUS: OK")
+                self.PROGRAM_STATUS.set("Command: MODIFY SELECTION\nSTATUS: OK")
 
                 #self.MAINFRAME.update()
 
-    def serial_ports(self):
+    def scanPorts(self):
         ''' Lists serial port names
 
         :raises EnvironmentError:
@@ -274,100 +309,99 @@ class GUI():
         :returns:
             A list of the serial ports available on the system
         '''
+        # Reference [1] - Modified by Arjun Panicker (Sept, 2021)
+
         if sys.platform.startswith('win'):
             ports = serial.tools.list_ports.comports()
-            print([port.name for port in ports])
         elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
-        # this excludes your current terminal "/dev/tty"
             ports = glob.glob('/dev/tty[A-Za-z]*')
         elif sys.platform.startswith('darwin'):
             ports = glob.glob('/dev/tty.*')
         else:
             raise EnvironmentError('Unsupported platform')
 
-        result = []
+        result = ['Debug'] # Remove this in production software
         
-        ACTIVE_PORTS = ['usb','USB']
-        for port in ports:
-            if True in [ eachActivePorts in port for eachActivePorts in ACTIVE_PORTS]:
+        for eachPort in ports:
+            print(eachPort.lower())
+            if 'usb' in eachPort.lower():
                 try:
-                    s = serial.Serial(port)
-                    s.close()
-                    result.append(port)
+                    serial.Serial(eachPort).close()
+                    result.append(eachPort)
                 except (OSError, serial.SerialException):
                     pass
         if result:
             s = ["SENSOR PORT"] + result
             g = ["GPS PORT"] + result
             self.DUALEM_PORT_OPTION_BTN.state(['!disabled'])
-            self.GPS_PORT_OPTION_BTN.state(["!disabled"])
-
-            self.GPS_PORT_OPTION_BTN.state(["readonly"])
+            self.DUALEM_PORT_BAUD_BTN.state(['!disabled'])
+            self.DUALEM_PORT_FREQ_BTN.state(['!disabled'])
             self.DUALEM_PORT_OPTION_BTN.state(['readonly'])
-
+            self.DUALEM_PORT_BAUD_BTN.state(['readonly'])
+            self.DUALEM_PORT_FREQ_BTN.state(['readonly'])
             self.DUALEM_PORT_OPTION_BTN['values'] = s
+            self.DUALEM_PORT_OPTION_BTN.set(s[1])
+            self.DUALEM_PORT_BAUD_BTN.set(self.LEGAL_BAUD_RATES[2])
+            self.DUALEM_PORT_FREQ_BTN.set(self.LEGAL_FREQ_RATES[4])
+            
+            
+            self.GPS_PORT_OPTION_BTN.state(["!disabled"])
+            self.GPS_PORT_BAUD_BTN.state(["!disabled"])
+            self.GPS_PORT_FREQ_BTN.state(["!disabled"])
+            self.GPS_PORT_OPTION_BTN.state(["readonly"])
+            self.GPS_PORT_BAUD_BTN.state(["readonly"])
+            self.GPS_PORT_FREQ_BTN.state(["readonly"])
             self.GPS_PORT_OPTION_BTN['values'] = g
-            self.DUALEM_PORT_OPTION_BTN.set(s[0])
-            self.GPS_PORT_OPTION_BTN.set(g[0])
+            self.GPS_PORT_OPTION_BTN.set(g[1])
+            self.GPS_PORT_BAUD_BTN.set(self.LEGAL_BAUD_RATES[5])
+            self.GPS_PORT_FREQ_BTN.set(self.LEGAL_FREQ_RATES[4])
 
             self.CONFIRM_BTN['state'] = tkinter.NORMAL
-            self.PROGRAM_STATUS.set("CMD: SCAN PORTS\nSTATUS: OK ")
+            self.PROGRAM_STATUS.set("Command: SCAN PORTS\nSTATUS: OK ")
         else:
             self.GPS_PORT_OPTION_BTN.state(["disabled"])
             self.GPS_PORT_OPTION_BTN.set("GPS NOT DETECTED")
             self.DUALEM_PORT_OPTION_BTN.state(['disabled'])
             self.DUALEM_PORT_OPTION_BTN.set("SENSOR NOT DETECTED")
             self.CONFIRM_BTN['state'] = tkinter.DISABLED
-            self.PROGRAM_STATUS.set("CMD: SCAN PORTS\nSTATUS: CHECK CONNECTION ")
-        #self.SCAN_BTN.configure(text="RESCAN PORTS")
-        self.CONFIRM_BTN.configure(bg="#c90231")
+            self.PROGRAM_STATUS.set("Command: SCAN PORTS\nSTATUS: CHECK CONNECTION ")
     
-    def openFolder(self):
-        try:
-            filename = datetime.datetime.now().strftime("%d-%m-%Y")
+    def saveProject(self):
+        '''
+        Function to set project output directory
+        returns:
+            None
+        '''
         
-            self.currentDir = filedialog.askdirectory()
-            path = os.path.join(self.currentDir,'{}.csv'.format(filename))
-            self.project_path = path
+        try:
+            # Create a default output folder
+            # Make the default dir if it doesn't exist already
+            opath = os.path.join(os.path.expanduser('~'),'Documents','EMI-Toolkit')
+            if not os.path.exists(opath):
+                    os.mkdir(opath)
+            filename = datetime.datetime.now().strftime("data-%d-%m-%Y")
+        
+            self.pwd = filedialog.askdirectory(initialdir=opath)
+            self.project_path = os.path.join(self.pwd,'{}.csv'.format(filename))
 
-            if not listdir(self.currentDir):
+            if not listdir(self.pwd):
                 self.START_SENSOR_BTN['state'] = tkinter.NORMAL
-                self.PROGRAM_STATUS.set("CMD: SAVE PROJECT \nPATH: {}".format(path))
+                self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nPATH: {}".format(self.project_path))
                 self.SAVE_PROJECT_BTN.config(text="FOLDER SELECTED")
             else:
-                self.PROGRAM_STATUS.set("CMD: SAVE PROJECT \nSTATUS: WARNING - FOUND EXISTING FILES")
+                self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nSTATUS: WARNING - FOUND EXISTING FILES")
                 self.MAINFRAME.update()
-                messagebox.showerror("WARNING: DIR NOT EMPTY", "Directory not empty!")
-                OVERRIDE = messagebox.askyesno("WARNING!","Do you wish to override existing files?")
-                if not OVERRIDE:
-                    self.PROGRAM_STATUS.set("CMD: SAVE PROJECT \nSTATUS: RESELECT PROJECT FOLDER")
-                    self.MAINFRAME.update()
-                    self.openFolder()
-                elif messagebox.askyesno("Confirm Action", "Are you sure you want to\n override files in this directory?"):
-                    print("Override Confirmed")
-                    self.START_SENSOR_BTN['state'] = tkinter.NORMAL
-                    self.PROGRAM_STATUS.set("CMD: SAVE PROJECT \nPATH: {}".format(path))
-                    self.SAVE_PROJECT_BTN.config(text="FOLDER SELECTED")
-                    self.project_path = path
+                messagebox.showwarning(title="WARNING",message= "Directory not empty")
+                if messagebox.askyesno("Confirm Action", "Overwrite files in this directory?"):
+                        self.START_SENSOR_BTN['state'] = tkinter.NORMAL 
+                        self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nPATH: {}".format(self.project_path))
+                        self.SAVE_PROJECT_BTN.config(text="FOLDER SELECTED")
                 else:
-                    self.START_SENSOR_BTN['state'] = tkinter.NORMAL
-                    self.PROGRAM_STATUS.set("CMD: SAVE PROJECT \nPATH: {}".format(path))
-                    self.SAVE_PROJECT_BTN.config(text="FOLDER SELECTED")
-                    self.project_path = path
+                        self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nSTATUS: RESELECT PROJECT FOLDER")
+                        self.MAINFRAME.update()
         except Exception as e:
             print(e)
-                
 
-        
-        # if self.currentDir:
-        #     self.PROGRAM_STATUS.set("CMD: SAVE PROJECT \nCURRENT_PATH: {}".format(self.currentDir))
-        #     self.SAVE_PROJECT_BTN.config(text="FOLDER SELECTED!")
-        #     self.SAVE_PROJECT_BTN['state'] = tkinter.DISABLED
-        #     #with open(path,'w') as outfile:
-        #         #outfile.write("FILE CREATED")
-        #     #print(listdir(path=self.currentDir))    
-        #     print(path)    #    
-    
     def readSensor(self):
         self.threadFlag = True
         def readserial(self,port=self.DUALEM_PORT.get(),path=self.project_path):
@@ -413,10 +447,12 @@ class GUI():
             print("NO PROCESS TO TERMINATE")
             return False
         
-    def open_prev_projects(self):
+    def prevProjects(self):
+        opath = os.path.join(os.path.expanduser('~'),'Documents','EMI-Toolkit')
+        if not os.path.exists(opath):
+                    os.mkdir(opath)
         try:
-            path = os.path.join(os.path.expanduser('~'),'Downloads')
-            proc = subprocess.Popen(['open',path])
+            proc = subprocess.Popen(['open',opath])
         except Exception as e:
             print(e)
 
