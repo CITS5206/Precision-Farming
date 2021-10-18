@@ -84,6 +84,7 @@ class GUI():
             self.WINDOW.geometry('640x460')
             self.WINDOW.minsize(width=640,height=460)
             self.WINDOW.maxsize(width=640,height=460)
+            self.WINDOW.iconbitmap(r"logo.ico")
         
     def GUIFrame(self):
             self.MAINFRAME = Frame(self.WINDOW)
