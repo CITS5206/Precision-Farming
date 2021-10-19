@@ -1,3 +1,17 @@
+# The University of Western Australia : 2021
+# CITS5206 Professional Computing
+# Group: Precision Farming
+
+# Source Code
+
+
+# Author: Deepakraj Sugumaran
+# Co-Author: Arjun Panicker
+# Date Created: Sept 2021
+# Last Modified: 
+# Version:  2.0
+# State :  Beta
+
 
 from tkinter.constants import OUTSIDE
 import pynmea2
@@ -12,6 +26,10 @@ def main(SENSOR ='/dev/tty.usbserial-1110', path=''):
     op = path
     f1 = open("dualem-data.txt",'r')
     f2 = open("gps-data.txt",'r')
+    dualem = iter(f1.readlines())
+    gps = iter(f2.readlines())
+    f1.close()
+    f2.close()
     with open(f"{op}",'a') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(
@@ -39,33 +57,25 @@ def main(SENSOR ='/dev/tty.usbserial-1110', path=''):
          'Magnetic field Z [nT]',    
          'Temperature [deg]')
          )
-
-
-
-    dualem = iter(f1.readlines())
-    gps = iter(f2.readlines())
-    f1.close()
-    f2.close()
-    outfile.close()
-
+        outfile.close()
 
     readSensor, readGPS, compile2 = True,True,False
     
 
-    ser = serial.Serial(SENSOR, 
-                                baudrate=9600, timeout=1, 
-                                bytesize=serial.EIGHTBITS, 
-                                parity=serial.PARITY_NONE, 
-                                stopbits=serial.STOPBITS_ONE)
-    if ser.is_open:
-        while True:
+    # ser = serial.Serial(SENSOR, 
+    #                             baudrate=9600, timeout=1, 
+    #                             bytesize=serial.EIGHTBITS, 
+    #                             parity=serial.PARITY_NONE, 
+    #                             stopbits=serial.STOPBITS_ONE)
+    # if ser.is_open:
+    while True:
             #firstH = False
             checklist=[]
             output_list =[]
             if readSensor:
                 try:
-                    nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
-                    #if not firstH:
+                    # nmeaobj = pynmea2.parse(ser.readline().decode('ascii', errors='replace').strip())
+                    nmeaobj = pynmea2.parse(dualem.__next__().decode('ascii', errors='replace').strip())
                     if nmeaobj.data[0] == 'H':
                             #firstH = True
                         for i in range(4):

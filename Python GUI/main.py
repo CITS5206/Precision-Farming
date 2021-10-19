@@ -41,7 +41,7 @@ import webbrowser
 
 
 class GUI():
-    """ eFarmer GUI Class
+    """ EMI Toolkit GUI Class
         :parameters:
             None
         :methods:
@@ -407,16 +407,23 @@ class GUI():
         def readserial(self,port=self.DUALEM_PORT.get(),path=self.project_path):
             while self.threadFlag:
                 if self.PROGRAM_STATUS_OP:
-                    self.PROGRAM_STATUS.set(f"{datetime.datetime.now().strftime('%H-%M-%S')}")
+                    self.PROGRAM_STATUS.set(f"{datetime.datetime.now().strftime('%H:%M:%S')}")
                 time.sleep(0.01)
             if not self.threadFlag:
                 print(f"Termindated {threading.current_thread().name}")
-            
 
-        #if self.DUALEM_PORT.get() in self.LEGAL_OPTIONS:
-        if self.DUALEM_PORT.get():
-            self.task = threading.Thread(target=readserial,name="serial thread", args=(self,self.DUALEM_PORT.get(),self.project_path,),daemon=True)
-            self.task.start()
+        def readserial_debug(self,port='Debug',baudrate=9600,timeout=1,path=self.project_path):
+            while self.threadFlag:
+                self.PROGRAM_STATUS.set(f"{port} : {baudrate} : {timeout}")
+                time.sleep(int(timeout))
+            if not self.threadFlag:
+                print(f"Terminated {threading.current_thread().name}")
+
+        if self.DUALEM_PORT.get()=='Debug' or self.GPS_PORT.get() == 'Debug':
+            self.worker1 = threading.Thread(target=readserial_debug,name="DebugSerialRead", args=(self,'Dualem',self.DUALEM_BAUD.get(), self.DUALEM_FREQ.get(), self.project_path), daemon=True)
+            self.worker2 = threading.Thread(target=readserial_debug,name="DebugSerialRead", args=(self,'GPS',self.GPS_BAUD.get(), self.GPS_FREQ.get(), self.project_path),daemon=True)
+            self.worker1.start()
+            self.worker2.start()
         self.STOP_SENSOR_BTN['state'] = tkinter.NORMAL
         self.START_SENSOR_BTN['state'] = tkinter.DISABLED
             #self.proc = subprocess.Popen(['python3','main_read.py', self.DUALEM_PORT.get(),self.project_path]) 
@@ -429,7 +436,7 @@ class GUI():
     
     def stop_sensor_process(self):
         try:
-            if self.task.is_alive():
+            if self.worker1.is_alive() or self.worker2.is_alive():
                 self.threadFlag = False
 
             # if self.proc:
