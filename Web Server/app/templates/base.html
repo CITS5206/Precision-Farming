@@ -1,0 +1,45 @@
+<!-- 
+* The University of Western Australia : 2021
+
+* CITS5206 Professional Computing
+
+* Group: Precision Farming
+
+
+
+* Source Code
+
+* Author: Harper Wu
+
+* Date Created: 23-09-2021
+
+* Last Modified: 13-10-2021
+
+* Version: 1.0
+
+* State : Stable 
+-->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if title %}
+        <title>{{ title }}</title>
+    {% else %}
+        <title>Precision Farming</title>
+    {% endif %}
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static',filename='leaflet-1.7.1/leaflet.css') }}"/>
+    <script src="{{ url_for('static',filename='leaflet-1.7.1/leaflet.js') }}"></script>
+    <script src="{{ url_for('static',filename='jquery/jquery-3.6.0.js') }}"></script>
+    {{ JSGlue.include() }}
+</head>
+<body>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

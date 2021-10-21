@@ -1,0 +1,187 @@
+/* 
+* The University of Western Australia : 2021
+
+* CITS5206 Professional Computing
+
+* Group: Precision Farming
+
+
+
+* Source Code
+
+* Author: Harper Wu
+
+* Date Created: 23-09-2021
+
+* Last Modified: 13-10-2021
+
+* Version: 1.0
+
+* State : Stable  
+*/
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Page home */
+.content-home {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.title-home {
+    margin-bottom: 1em;
+}
+
+/* Page tracking */
+.upper-wrap,
+.bottom-wrap {
+    background-color: #7C7574;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: #fff;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 8vh;
+    z-index: 1;
+    padding: .5em;
+}
+
+.upper-wrap {
+    top: 0;
+}
+
+.bottom-wrap {
+    bottom: 0;
+}
+
+.device {
+    display: flex;
+    flex-direction: row;
+}
+
+.device-name {
+    margin-left:.5em ;
+}
+
+.device-status-shape {
+    margin: 0.1em;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+}
+
+.current-location {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#map { 
+    height: 92vh; 
+    margin-top: 8vh;
+}
+
+.column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.column-low {
+    background-color: green;
+}
+.column-medium {
+    background-color: yellow;
+}
+.column-high {
+    background-color: red;
+}
+
+.buttons {
+    list-style: none;
+    text-decoration: none;
+    display: flex;
+    flex-direction: row;
+}
+
+.buttons li {
+    display: inline;
+    padding: 0 1em;
+}
+
+.buttons li a,
+.btn-intable {
+    text-decoration: none;
+    color: #fff;
+    background-color: #4E5DE8;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.buttons li a {
+    width: 120px;
+    height: 7vh;
+}
+
+.btn-intable {
+    width: 60px;
+    height: 25px;
+}
+
+/* Page Map */
+.title-map {
+    padding: 1em;
+}
+
+.warning {
+    padding: 1em;
+    color: red;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto; 
+    border-collapse: collapse;
+}
+
+table.list{
+    width: 50%;
+}
+
+td.list, th.list {
+    /* border: 1px solid #ddd; */
+    padding: 8px;
+}
+
+.list-Measurement {
+    display: flex;
+}
+
+tr.list:nth-child(even){background: #EEEEEE;}
+
+
+tr.list:hover {background-color: #ddd;}
+
+th.list {
+padding-top: 12px;
+padding-bottom: 12px;
+text-align: left;
+background-color: #4E5DE8;
+color: white;
+text-align: center;
+}
