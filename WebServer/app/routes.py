@@ -57,7 +57,7 @@ def map():
     return render_template('map.html', title='PrecisionFarming-Map', lstMap=lstMap)
 
 @app.route('/getJson')
-def getJson(path='./app/static/liveFeed/d.json'):
+def getJson(path='./app/static/liveFeed/data.json'):
     '''
     getJson
         :parameters:
