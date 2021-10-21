@@ -164,7 +164,7 @@ table.list{
 }
 
 td.list, th.list {
-    border: 1px solid #ddd;
+    /* border: 1px solid #ddd; */
     padding: 8px;
 }
 
