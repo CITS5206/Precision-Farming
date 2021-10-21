@@ -10,6 +10,7 @@ class GUITestCase(unittest.TestCase):
     """
 
     def test_GUI_startup(self):
+        
         app = GUI()
 
         # Test Window Title
@@ -63,3 +64,5 @@ class GUITestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    c = GUITestCase()
+    c.test_GUI_startup()

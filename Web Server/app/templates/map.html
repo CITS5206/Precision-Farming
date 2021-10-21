@@ -1,0 +1,49 @@
+<!-- 
+* The University of Western Australia : 2021
+
+* CITS5206 Professional Computing
+
+* Group: Precision Farming
+
+
+
+* Source Code
+
+* Author: Harper Wu
+
+* Date Created: 23-09-2021
+
+* Last Modified: 13-10-2021
+
+* Version: 1.0
+
+* State : Stable 
+-->
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title-map">Map</h1>
+
+{% if lstMap|length == 0 %}
+<p class ="warning">No avalianle maps, please place map folders "Maps" folder</p>
+{% else %}
+<table class ="list">
+    <tr class ="list">
+        <th class ="list">Field</th>
+        <th class ="list">Operation</th>
+    </tr>
+    {% for m in lstMap %}
+    <tr class ="list">        
+        <td class ="list">{{ m }} </td>
+        <td class ="list list-Measurement">
+            <a href="{{ url_for('tracking', mapName = m) }}" class="btn-intable">Live</a>
+            <!-- <a href="{{ url_for('heatmap', mapName = m, measure = 'H1ppt') }}" class="btn-intable">H1ppt</a>
+            <a href="{{ url_for('heatmap', mapName = m, measure = 'P1ppt') }}" class="btn-intable">P1ppt</a> -->
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

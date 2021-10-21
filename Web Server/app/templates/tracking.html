@@ -1,0 +1,56 @@
+<!-- 
+* The University of Western Australia : 2021
+
+* CITS5206 Professional Computing
+
+* Group: Precision Farming
+
+
+
+* Source Code
+
+* Author: Harper Wu
+
+* Date Created: 23-09-2021
+
+* Last Modified: 13-10-2021
+
+* Version: 1.0
+
+* State : Stable 
+-->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <div class="upper-wrap">
+        <div>
+            <ul class="buttons">
+                <li>
+                    <a href="{{ url_for('map') }}" class="btn">Map</a>
+                </li>
+                <li>
+                    <a href="#" class= "btn" id="saveImage">Stop</a>
+                </li>
+            </ul>
+        </div>
+        <div class="current-location">
+            <p>Current Location</p>
+            <p id='current-position'>{{ currPos[0] }}, {{ currPos[1] }}</p>
+        </div>
+    </div>
+    <div id="map"></div>
+</div>
+<script type="text/javascript">
+    var mapName = {{ mapName|tojson }}
+    var currPos = {{ currPos|tojson }}
+</script>
+
+<script src="{{ url_for('static', filename='/scripts/dom-to-image.js') }}"></script>
+<script src="{{ url_for('static', filename='/scripts/FileSaver.js') }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='/leaflet-1.7.1/heatmap.js') }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='/leaflet-1.7.1/leaflet-heatmap.js') }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='map.js') }}"></script>
+
+{% endblock %}
