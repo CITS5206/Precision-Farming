@@ -36,6 +36,10 @@ import os
 import datetime
 import time
 import webbrowser
+import pynmea2
+import csv
+import itertools
+import json
 
 
 
@@ -49,7 +53,7 @@ class GUI():
             scanPorts(),
             saveProject(),
             readSensor(),
-            stop_sensor_process(),
+            stopSensor(),
         
         :returns:
             None
@@ -78,16 +82,22 @@ class GUI():
         self.GUIMasterGrid()
         
     def GUIMainloop(self):
+        '''
+        Initialise the MainLoop
+        '''
         self.WINDOW.mainloop()    
 
     def GUIWindow(self):
+        '''
+        Initialise Gui Window
+        '''
 
-            #INITIALIZE GUI WINDOW
-            self.WINDOW = Tk()
-            self.WINDOW.title("E.M.I Toolkit")
-            self.WINDOW.geometry('640x460')
-            self.WINDOW.minsize(width=640,height=460)
-            self.WINDOW.maxsize(width=640,height=460)
+        #INITIALIZE GUI WINDOW
+        self.WINDOW = Tk()
+        self.WINDOW.title("EMI Toolkit")
+        self.WINDOW.geometry('640x460')
+        self.WINDOW.minsize(width=640,height=460)
+        self.WINDOW.maxsize(width=640,height=460)
         
     def GUIFrame(self):
             self.MAINFRAME = Frame(self.WINDOW)
@@ -99,14 +109,14 @@ class GUI():
             
             self.button_width = 19
             self.button_padding_x = 2
-            self.button_padding_y = 2
+            self.button_padding_y = 5
             self.combo_box_width = 20
-            self.sep_padding_y = 10
+            self.sep_padding_y = 5
             self.sep_padding_x = 0
             self.text_padding_x = 0
             self.text_padding_y = 2
-            self.label_font = 'Helvetica 16 bold'
-            self.button_font = 'Helvetica 12'
+            self.label_font = 'Helvetica 12 bold'
+            self.button_font = 'Helvetica 10'
             self.software_version_font = 'Courier 8 italic'
             self.software_version = 'SW Version 1.0'
 
@@ -168,8 +178,8 @@ class GUI():
             # START : CONTROL OPTIONS
             self.CONTROL_LABEL = ttk.Label(self.MAINFRAME, text='CONTROL PANEL',justify=tkinter.CENTER,font=self.label_font)
             self.START_SENSOR_BTN = Button(self.MAINFRAME,text="START SENSOR READING",command=self.readSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.STOP_SENSOR_BTN = Button(self.MAINFRAME,text="STOP SENSOR READING", command=self.stop_sensor_process, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.READ_OP_DATA = Button(self.MAINFRAME,text="ENABLE LIVE OUTPUT", command=self.open_op_window, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.STOP_SENSOR_BTN = Button(self.MAINFRAME,text="STOP SENSOR READING", command=self.stopSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.READ_OP_DATA = Button(self.MAINFRAME,text="ENABLE LIVE OUTPUT", command=self.toggleOutput, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
 
             # END : CONTROL OPTIONS
 
@@ -177,9 +187,9 @@ class GUI():
             
             # START: VISUALIZATION
             self.VISUAL_LABEL = ttk.Label(self.MAINFRAME, text='VISUALIZATION',justify=tkinter.CENTER,font=self.label_font)
-            self.START_WEBSEVER_BTN = Button(self.MAINFRAME,text="START WEBSERVER",command=self.readSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.STOP_WEBSEVER_BTN = Button(self.MAINFRAME,text="STOP WEBSERVER",command=self.readSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.OPEN_WEBSEVER_BTN = Button(self.MAINFRAME,text="OPEN WEB BROWSER",command=self.openbrowser, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.START_WEBSEVER_BTN = Button(self.MAINFRAME,text="START WEBSERVER",command=self.startWebserver, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.STOP_WEBSEVER_BTN = Button(self.MAINFRAME,text="STOP WEBSERVER",command=self.stopWebserver, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.OPEN_WEBSEVER_BTN = Button(self.MAINFRAME,text="OPEN WEB BROWSER",command=self.openBrowser, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
 
             # END: VISUALIZATION
 
@@ -243,13 +253,12 @@ class GUI():
             self.STATUS_INDICATOR.grid(row=22,columnspan=3,pady=self.text_padding_y)
 
     def GUISanityCheck(self):
-        VALID = False
         if self.DUALEM_PORT.get() == "SENSOR PORT" or  self.GPS_PORT.get() == "GPS PORT":
             self.PROGRAM_STATUS.set("Command: Scan Ports\nStatus: Port Selection Error")
             self.MAINFRAME.update()
             messagebox.showwarning(title="WARNING",message= "PORT SELECTION ERROR")
 
-        if self.DUALEM_BAUD.get() == 'BAUD RATE' or self.GPS_BAUD.get()== 'BAUD RATE':
+        elif self.DUALEM_BAUD.get() == 'BAUD RATE' or self.GPS_BAUD.get()== 'BAUD RATE':
             self.PROGRAM_STATUS.set("Command: Confirm Selection\nStatus: Baud Rate Not Set")
             self.MAINFRAME.update()
             messagebox.showwarning(title="WARNING",message= "BAUD RATE NOT SELECTED")
@@ -261,18 +270,13 @@ class GUI():
 
         else:
             self.PROGRAM_STATUS.set("Command: Confirm Selection\nStatus: OK")
-            print(f"Verifying Settings: {not VALID}")
             self.GUISelectionToggle()
 
-        try:
-            print(self.DUALEM_BAUD.get())
-            print(self.GPS_BAUD.get())
-            # if isinstance(self.DUALEM_BAUD,int):print(f"{self.DUALEM_BAUD}")
-            # if isinstance(self.GPS_BAUD,int):print(f"{self.GPS_BAUD}")
-        except Exception as e:
-            print(e)
         
     def GUISelectionToggle(self):
+        '''
+        Function to toggle selection on or off
+        '''
         FLAG = ["WAIT FOR SCAN","USB NOT DETECTED" ]
         if self.CONFIRM_BTN.cget('text') != "MODIFY SELECTION":
             if not self.DUALEM_PORT.get() in FLAG  and not self.GPS_PORT.get() in FLAG :
@@ -299,8 +303,6 @@ class GUI():
                 self.CONFIRM_BTN.config(text="CONFIRM SELECTION")
                 self.PROGRAM_STATUS.set("Command: MODIFY SELECTION\nSTATUS: OK")
 
-                #self.MAINFRAME.update()
-
     def scanPorts(self):
         ''' Lists serial port names
 
@@ -320,7 +322,7 @@ class GUI():
         else:
             raise EnvironmentError('Unsupported platform')
 
-        result = ['Debug'] # Remove this in production software
+        result = ['Demo'] # Remove this in production software
         
         for eachPort in ports:
             print(eachPort.lower())
@@ -331,6 +333,7 @@ class GUI():
                 except (OSError, serial.SerialException):
                     pass
         if result:
+
             s = ["SENSOR PORT"] + result
             g = ["GPS PORT"] + result
             self.DUALEM_PORT_OPTION_BTN.state(['!disabled'])
@@ -340,7 +343,10 @@ class GUI():
             self.DUALEM_PORT_BAUD_BTN.state(['readonly'])
             self.DUALEM_PORT_FREQ_BTN.state(['readonly'])
             self.DUALEM_PORT_OPTION_BTN['values'] = s
-            self.DUALEM_PORT_OPTION_BTN.set(s[1])
+            if len(s)>2:
+                self.DUALEM_PORT_OPTION_BTN.set(s[2])
+            else:
+                self.DUALEM_PORT_OPTION_BTN.set(s[1])
             self.DUALEM_PORT_BAUD_BTN.set(self.LEGAL_BAUD_RATES[2])
             self.DUALEM_PORT_FREQ_BTN.set(self.LEGAL_FREQ_RATES[4])
             
@@ -352,7 +358,13 @@ class GUI():
             self.GPS_PORT_BAUD_BTN.state(["readonly"])
             self.GPS_PORT_FREQ_BTN.state(["readonly"])
             self.GPS_PORT_OPTION_BTN['values'] = g
-            self.GPS_PORT_OPTION_BTN.set(g[1])
+            if len(g)>3:
+                self.GPS_PORT_OPTION_BTN.set(g[3])
+            elif len(g)>2:
+                self.GPS_PORT_OPTION_BTN.set(g[2])
+            else:
+                self.GPS_PORT_OPTION_BTN.set(g[1])
+
             self.GPS_PORT_BAUD_BTN.set(self.LEGAL_BAUD_RATES[5])
             self.GPS_PORT_FREQ_BTN.set(self.LEGAL_FREQ_RATES[4])
 
@@ -383,8 +395,11 @@ class GUI():
         
             self.pwd = filedialog.askdirectory(initialdir=opath)
             self.project_path = os.path.join(self.pwd,'{}.csv'.format(filename))
+            self.project_path_temp = os.path.join(self.pwd,'{}.txt'.format(filename))
+            self.project_path_json = os.path.join(self.pwd,'data.json')
 
-            if not listdir(self.pwd):
+
+            if not os.path.exists(self.project_path):
                 self.START_SENSOR_BTN['state'] = tkinter.NORMAL
                 self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nPATH: {}".format(self.project_path))
                 self.SAVE_PROJECT_BTN.config(text="FOLDER SELECTED")
@@ -403,54 +418,199 @@ class GUI():
             print(e)
 
     def readSensor(self):
+
+        def readserial_Demo(self,path=self.project_path):
+            f1 = open("dualem-data.txt",'r')
+            f2 = open("gps-data.txt",'r')
+            dualem = iter(f1.readlines())
+            gps = iter(f2.readlines())
+            f1.close()
+            f2.close()
+            with open(f"{path}",'w') as outfile:
+                writer = csv.writer(outfile)
+                writer.writerow((
+                                    'Latitude',
+                                    'Longitude',
+                                    'Timestamp [HhMmSs]',  
+                                    'HCP conductivity of 0.5m array [mS/m]',    
+                                    'HCP inphase of 0.5m array [ppt]',  
+                                    'PRP conductivity of 0.5m array [mS/m]',
+                                    'PRP inphase of 0.5m array [ppt]',  
+                                    'HCP conductivity of 1m array [mS/m]',  
+                                    'HCP inphase of 1m array [ppt]',    
+                                    'PRP conductivity of 1m array [mS/m]',  
+                                    'PRP inphase of 1m array [ppt]',    
+                                    'Voltage [V]'   ,
+                                    'Temperature [deg]',   
+                                    'Pitch [deg]',  
+                                    'Roll [deg]',   
+                                    'Acceleration X [gal]', 
+                                    'Acceleration Y [gal]', 
+                                    'Acceleration Z [gal]',    
+                                    'Magnetic field X [nT]',    
+                                    'Magnetic field Y [nT]',    
+                                    'Magnetic field Z [nT]',    
+                                    'Temperature [deg]'
+                                    ))
+            outfile.close()
+
+            while self.threadFlag:
+                checklist=[]
+                output_list=[]
+                try:
+                    nmeaobj = pynmea2.parse(dualem.__next__().strip())
+                    if nmeaobj.data[0] == 'H':
+                        for i in range(4):
+                                checklist.append(nmeaobj.data)
+                                nmeaobj = pynmea2.parse(dualem.__next__().strip())
+                        g_data = pynmea2.parse(gps.__next__())
+                        checklist.append([g_data.latitude, g_data.longitude])
+                    time.sleep(2)
+                except Exception as e:
+                    print(e)
+                if len(checklist) ==5:
+                        output_list = checklist[4]+ checklist[0][1:] + checklist[1][2:] + checklist[2][1:] + checklist[3][1:]
+                        with open(f"{path}",'a') as outfile:
+                            writer = csv.writer(outfile)
+                            print(output_list)
+                            writer.writerow(output_list)
+                            outfile.close()
+                    
+                if not self.threadFlag:
+                    print(f"Terminated {threading.current_thread().name}")
+                          
+        def readserial_Prod(self,path=self.project_path):
+            if not os.path.exists(path):
+                print("File Doesnt exist, creating one...")
+                with open(f"{path}",'w') as outfile:
+                    writer = csv.writer(outfile)
+                    writer.writerow((
+                                    'Latitude',
+                                    'Longitude',
+                                    'Timestamp [HhMmSs]',  
+                                    'HCP conductivity of 0.5m array [mS/m]',    
+                                    'HCP inphase of 0.5m array [ppt]',  
+                                    'PRP conductivity of 0.5m array [mS/m]',
+                                    'PRP inphase of 0.5m array [ppt]',  
+                                    'HCP conductivity of 1m array [mS/m]',  
+                                    'HCP inphase of 1m array [ppt]',    
+                                    'PRP conductivity of 1m array [mS/m]',  
+                                    'PRP inphase of 1m array [ppt]',    
+                                    'Voltage [V]'   ,
+                                    'Temperature [deg]',   
+                                    'Pitch [deg]',  
+                                    'Roll [deg]',   
+                                    'Acceleration X [gal]', 
+                                    'Acceleration Y [gal]', 
+                                    'Acceleration Z [gal]',    
+                                    'Magnetic field X [nT]',    
+                                    'Magnetic field Y [nT]',    
+                                    'Magnetic field Z [nT]',    
+                                    'Temperature [deg]'
+                                    ))
+                    outfile.close()
+            
+            try:
+                    sensor = serial.Serial(
+                            port=self.DUALEM_PORT.get(),
+                            baudrate=int(self.DUALEM_BAUD.get()),
+                            timeout=int(self.DUALEM_FREQ.get()),
+                            parity=serial.PARITY_NONE,
+                            bytesize=serial.EIGHTBITS,
+                            stopbits=serial.STOPBITS_ONE)
+                    gps = serial.Serial(
+                            port=self.GPS_PORT.get(),
+                            baudrate=int(self.GPS_BAUD.get()),
+                            timeout=int(self.GPS_FREQ.get()),
+                            parity=serial.PARITY_NONE,
+                            bytesize=serial.EIGHTBITS,
+                            stopbits=serial.STOPBITS_ONE)
+            except Exception as e:
+                    print(e)
+                    return False
+            lats=[]
+            longs=[]
+            while self.threadFlag:
+                    outputlist = []
+                    try:
+                        temp=""
+                        sensor_obj = pynmea2.parse(sensor.readline().decode('ascii', errors='replace').strip())
+                        gps_obj = pynmea2.parse(gps.readline().decode('ascii', errors='replace').strip())
+                        temp += f"{gps_obj.latitude},{gps_obj.longitude}"
+                        lats.append(gps_obj.latitude)
+                        longs.append(gps_obj.longitude)
+                        with open(self.project_path_json, 'w') as outputfile:
+                            data = [ list(points) for points in zip(lats,longs)]
+                            geojson = json.dumps({
+                                        'LatLongs': data ,
+                                        'live': [lats[-1],longs[-1]]
+                                        }, indent = 4)
+                            outputfile.write(geojson)
+                            outputfile.close()                       
+                        for field in sensor_obj.data:
+                            temp+= f",{field}"
+                        
+                        with open(f"{self.project_path_temp}",'a') as outfile:
+                            outfile.write(f"{temp}\n")
+                            outfile.close
+                        if self.PROGRAM_STATUS_OP:
+                            self.PROGRAM_STATUS.set(f"Command: Live Output\nSensor-Data:{sensor_obj.data}\nGPS-Data: {gps_obj.latitude},{gps_obj.longitude}")
+                        else:
+                            self.PROGRAM_STATUS.set(f"Command: Disable Live Output\nData: --- ")
+
+                        print(temp)
+                        time.sleep(1)
+                    except Exception as e:
+                            self.PROGRAM_STATUS.set(f"ERROR: CHECK PORTS!")
+                            continue
+
         self.threadFlag = True
-        def readserial(self,port=self.DUALEM_PORT.get(),path=self.project_path):
-            while self.threadFlag:
-                if self.PROGRAM_STATUS_OP:
-                    self.PROGRAM_STATUS.set(f"{datetime.datetime.now().strftime('%H:%M:%S')}")
-                time.sleep(0.01)
-            if not self.threadFlag:
-                print(f"Termindated {threading.current_thread().name}")
-
-        def readserial_debug(self,port='Debug',baudrate=9600,timeout=1,path=self.project_path):
-            while self.threadFlag:
-                self.PROGRAM_STATUS.set(f"{port} : {baudrate} : {timeout}")
-                time.sleep(int(timeout))
-            if not self.threadFlag:
-                print(f"Terminated {threading.current_thread().name}")
-
-        if self.DUALEM_PORT.get()=='Debug' or self.GPS_PORT.get() == 'Debug':
-            self.worker1 = threading.Thread(target=readserial_debug,name="DebugSerialRead", args=(self,'Dualem',self.DUALEM_BAUD.get(), self.DUALEM_FREQ.get(), self.project_path), daemon=True)
-            self.worker2 = threading.Thread(target=readserial_debug,name="DebugSerialRead", args=(self,'GPS',self.GPS_BAUD.get(), self.GPS_FREQ.get(), self.project_path),daemon=True)
+        if not self.DUALEM_PORT.get()=='Demo' and not self.GPS_PORT.get() == 'Demo':
+            print("Startring Thread for readSerial()")
+            self.worker1 = threading.Thread(target=readserial_Prod,name="DemoSerialProd", args=(self,self.project_path), daemon=True)
             self.worker1.start()
-            self.worker2.start()
+        if self.DUALEM_PORT.get()=='Demo' and self.GPS_PORT.get() == 'Demo':
+            print("Startring Demo Thread for readSerial()")
+            self.worker1 = threading.Thread(target=readserial_Demo,name="DemoSerialDemo", args=(self,self.project_path), daemon=True)
+            self.worker1.start()
+        
+
         self.STOP_SENSOR_BTN['state'] = tkinter.NORMAL
         self.START_SENSOR_BTN['state'] = tkinter.DISABLED
-            #self.proc = subprocess.Popen(['python3','main_read.py', self.DUALEM_PORT.get(),self.project_path]) 
-             # Run other script - doesn't wait for it to finish.
-        #print(self.proc.pid)
-        # if self.proc.pid:
-        #        self.STOP_SENSOR_BTN['state'] = tkinter.NORMAL
-        #        self.START_SENSOR_BTN['state'] = tkinter.DISABLED
+        self.START_WEBSEVER_BTN['state'] = tkinter.NORMAL
         self.MAINFRAME.update() 
     
-    def stop_sensor_process(self):
-        try:
-            if self.worker1.is_alive() or self.worker2.is_alive():
-                self.threadFlag = False
+    def stopSensor(self):
+        def generateCSV():
+            datalist =[]
+            if os.path.exists(self.project_path):
+                f = open(self.project_path_temp,'r').readlines()
+                for i in range(len(f)):
+                    try:
+                        if f[i].split(",")[2] == 'H':
+                            c = f[i].split(",")[0:2]+f[i].split(",")[3:] + f[i+1].split(",")[4:] + f[i+2].split(",")[3:]+f[i+3].split(",")[3:]
+                            with open(self.project_path,'a') as outfile:
+                                writer = csv.writer(outfile)
+                                writer.writerow(c)
+                                outfile.close()                           
+                    except Exception as e:
+                        print(e)
+                        pass
+            
+            os.remove(self.project_path_temp)
 
-            # if self.proc:
-                # self.proc.terminate()
-                
-                #print("PROCESS: {} TERMINATED".format(self.proc.pid))
-                self.START_SENSOR_BTN['state'] = tkinter.NORMAL
-                self.STOP_SENSOR_BTN['state'] = tkinter.DISABLED
-                #self.task.join()
-                return True
-                
-            return False
+        try:
+            self.threadFlag = False
+            if os.path.exists(self.project_path_temp):
+                generateCSV()
+            self.START_SENSOR_BTN['state'] = tkinter.NORMAL
+            self.STOP_SENSOR_BTN['state'] = tkinter.DISABLED
+            self.stopWebserver()
+            self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
+            return True
 
         except Exception as e:
+            print(e)
             print("NO PROCESS TO TERMINATE")
             return False
         
@@ -463,15 +623,37 @@ class GUI():
         except Exception as e:
             print(e)
 
-    def open_op_window(self):
+    def toggleOutput(self):
         if self.READ_OP_DATA.cget('text') == "ENABLE LIVE OUTPUT":
             self.READ_OP_DATA.config(text='DISABLE LIVE OUTPUT')
         elif self.READ_OP_DATA.cget('text') == 'DISABLE LIVE OUTPUT':
             self.READ_OP_DATA.config(text='ENABLE LIVE OUTPUT')
         self.PROGRAM_STATUS_OP = not self.PROGRAM_STATUS_OP
         print(self.PROGRAM_STATUS_OP)
-                  
-    def openbrowser(self):
+
+    def startWebserver(self):
+        self.server = 0
+        if os.path.exists("server.py"):
+            self.server = subprocess.Popen(['python3', 'server.py'])
+            self.PROGRAM_STATUS.set(f"Command: START WEBSERVER \nSTATUS: Server: {self.server.pid} ID is running.")
+            self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
+            self.STOP_WEBSEVER_BTN['state'] = tkinter.NORMAL
+        else:
+            self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
+
+    def stopWebserver(self):
+        try:
+            if self.server.pid:
+                self.server.terminate()
+            self.PROGRAM_STATUS.set(f"Command: START WEBSERVER \nSTATUS: Server: {self.server.pid} ID is terminated.")
+            self.START_WEBSEVER_BTN['state'] = tkinter.NORMAL
+            self.STOP_WEBSEVER_BTN['state'] = tkinter.DISABLED
+
+        except:
+            print("webserver not running")
+            
+
+    def openBrowser(self):
         webbrowser.open("http:localhost:5000")
 
     
@@ -482,7 +664,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
     finally:
-        gui.stop_sensor_process()
+        gui.stopSensor()
         
 
         
