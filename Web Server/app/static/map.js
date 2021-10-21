@@ -59,8 +59,20 @@ function draw() {
 
 draw_Interval = setInterval(draw, 250);
 
-$('#stop').click(function () {
-    clearInterval(draw_Interval);
-    document.getElementById('stop').innerHTML = 'Stoped';
-    
+$('#saveImage').click(async function () {
+    var saveImage = document.getElementById('saveImage');
+    if (saveImage.innerHTML ==='Stop'){
+        // map.setZoom(18);
+        // await new Promise(r => setTimeout(r, 2000));        
+        blob = domtoimage.toBlob(document.getElementById('map'))
+            .then(function (blob) {
+                let ymd = getYMD();
+                // download path depend on the browser setting, javascript can not specify
+                // File can not be saved when page has GET error,
+                // like 'http://localhost:5000/blah.png 404 (NOT FOUND)'
+                window.saveAs(blob, mapName+'_'+measure+'_'+ymd+'.png');
+            });
+        // clearInterval(draw_Interval);
+        saveImage.innerHTML = 'Done';
+    }
 })
