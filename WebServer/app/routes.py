@@ -31,20 +31,24 @@ from pathlib    import Path
 @app.route('/tracking/')
 def tracking():
     mapName = request.args.get('mapName')
-    measure = request.args.get('measure')
+    # measure = request.args.get('measure')
     currPos = getJson()['live']
     return render_template('tracking.html', title='PrecisionFarming-Tracking', 
-                            measure = measure, currPos = currPos, mapName=mapName)
+                            # measure = measure, 
+                            currPos = currPos, mapName=mapName)
 
+@app.route('/heatmap/')
+def heatmap():
+    mapName = request.args.get('mapName')
+    measure = request.args.get('measure')
+    currPos = getJson()['live']
+    return render_template('heatmap.html', title='PrecisionFarming-Heatmap', 
+                            measure = measure, 
+                            currPos = currPos, mapName=mapName)
 
 @app.route('/index')
 def index():
     return render_template('index.html', title='PrecisionFarming-Home')
-
-
-@app.route('/heatmap')
-def heatmap():
-    return render_template('heatmap.html', title='Heatmap')
 
 @app.route('/')
 @app.route('/map')
@@ -54,6 +58,20 @@ def map():
 
 @app.route('/getJson')
 def getJson(path='./app/static/liveFeed/d.json'):
+    '''
+    getJson
+        :parameters:
+            string, path of th file (default: './app/static/liveFeed/d.json')
+        
+        :returns:
+            json, file content
+    '''
+    f = open(path, 'r')
+    data = json.load(f)
+    return data
+
+@app.route('/getHMJson')
+def getHMJson(path='./app/static/liveFeed/heatmap.json'):
     '''
     getJson
         :parameters:

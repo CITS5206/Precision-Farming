@@ -31,7 +31,7 @@
                     <a href="{{ url_for('map') }}" class="btn">Map</a>
                 </li>
                 <li>
-                    <a href="#" class= "btn" id="stop">Stop</a>
+                    <a href="#" class= "btn" id="saveImage">Save Image</a>
                 </li>
             </ul>
         </div>
@@ -45,12 +45,13 @@
 <script type="text/javascript">
     var mapName = {{ mapName|tojson }}
     var currPos = {{ currPos|tojson }}
+    var measure = {{ measure|tojson }}
 </script>
 
 <script src="{{ url_for('static', filename='/scripts/dom-to-image.js') }}"></script>
 <script src="{{ url_for('static', filename='/scripts/FileSaver.js') }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='/leaflet-1.7.1/heatmap.js') }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='/leaflet-1.7.1/leaflet-heatmap.js') }}"></script>
-<script type='text/javascript' src="{{ url_for('static', filename='map.js') }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='heatmap.js') }}"></script>
 
 {% endblock %}
