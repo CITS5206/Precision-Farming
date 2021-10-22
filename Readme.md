@@ -9,49 +9,42 @@
     5. Kiet Hoang
 
 ## Project Sub-Team:
-    A. Python Companion App - [ Arjun Panicker , Deepakraj]
+    A. EMI Toolkit - [ Arjun Panicker , Deepakraj]
     B. Python Websever  - [Clariza Look, Harper Wu, Kiet Hoang]
 
-# Python Companion App
+# EMI Toolkit
 
-### Python Companion App - Requirements
+### EMI Toolkit - Requirements
+
     1. [Required] Python 3.7.3 and above
     2. [Required] PySerial 3.5 and above
     3. [Required] PyNMEA-2 1.18 and above
-### Python Companion App - Install Dependent Packages
+
+### Prerequisites - Install Dependent Packages
+    1. Download and install anaconda https://www.anaconda.com/
+    2. Download or Clone this repo.
+    3. Open terminal [Linux/MacOS] or Open Anaconda Terminal [Windows] and navigate to Prerequisites/
+ 
+    cd Prerequisites/
+
+    4. Use the following command to create a conda environment
     
-    pip install requirements.txt
+    conda env create -f precision-farming-emitoolkit.yml
     
+    5. Activate the environment by,
     
-### Python Companion App - Running the GUI
-    1. Download or clone the repo.
-    2. Open the Python GUI folder.
-    3. run install command from above
-    4a. Using terminal : python3 main.py
-    4b. Using IDE: Open main.py and RUN.
+    conda activate emitoolkit
+
+### EMI Toolkit - Running the GUI
+    1. Navigate to EMI-Toolkit Folder
     
+    cd ..
+    cd EMI-Toolkit/
+    
+    2. Run the main program by,
 
+    python3 main.py
 
-# Web Server - Precision Farming
-This web server is using Flask to host a web application as a dashboard for users to collect and visualize data from Dualem 1H sensor and external GPS moduel.
-
-## Quick start for developer
-1. Install and activate virtual environment
-```
-python3 -m venv venv
-source venv/bin/activate
-```
-
-2. Install dependencies with pip or pip3
-```
-pip install -r requirements.txt
-```
-
-3. Run flask program in WebServer directory
-```
-export FLASK_APP=farm.py
-flask run
-```
 
 ## Quick start for client
 Option 1. Open python GUI, connect hardwares and click "START WEBSERVER", then access web application via browser.  
