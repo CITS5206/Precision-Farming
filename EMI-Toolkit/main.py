@@ -687,10 +687,10 @@ class GUI():
             print(e)
 
     def toggleOutput(self):
-        if self.READ_OP_DATA.cget('text') == "LIVE OUTPUT(OFF)":
-            self.READ_OP_DATA.config(text='LIVE OUTPUT(ON)')
-        elif self.READ_OP_DATA.cget('text') == 'LIVE OUTPUT(ON)':
+        if self.READ_OP_DATA.cget('text') == "LIVE OUTPUT(ON)":
             self.READ_OP_DATA.config(text='LIVE OUTPUT(OFF)')
+        elif self.READ_OP_DATA.cget('text') == 'LIVE OUTPUT(OFF)':
+            self.READ_OP_DATA.config(text='LIVE OUTPUT(ON)')
         self.PROGRAM_STATUS_OP = not self.PROGRAM_STATUS_OP
 
     def startWebserver(self):
