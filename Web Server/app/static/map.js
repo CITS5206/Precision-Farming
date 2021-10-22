@@ -20,6 +20,11 @@
 * Version: 1.0
 
 * State : Stable
+
+References:
+1. Leaflet tutorial: https://leafletjs.com/examples/quick-start/
+2. Leaflet heatmap: https://www.patrick-wied.at/static/heatmapjs/example-heatmap-leaflet.html
+3. Dom to image: https://github.com/tsayen/dom-to-image
 */
 
 
@@ -64,12 +69,10 @@ function getYMD(){
     month = '' + (d.getMonth() + 1),
     day = '' + d.getDate(),
     year = d.getFullYear();
-
     if (month.length < 2) 
         month = '0' + month;
     if (day.length < 2) 
         day = '0' + day;
-
     return [year, month, day].join('');
 }
 
