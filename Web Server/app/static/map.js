@@ -20,6 +20,11 @@
 * Version: 1.0
 
 * State : Stable
+
+References:
+1. Leaflet tutorial: https://leafletjs.com/examples/quick-start/
+2. Leaflet heatmap: https://www.patrick-wied.at/static/heatmapjs/example-heatmap-leaflet.html
+3. Dom to image: https://github.com/tsayen/dom-to-image
 */
 
 
@@ -59,6 +64,18 @@ function draw() {
 
 draw_Interval = setInterval(draw, 250);
 
+function getYMD(){
+    var d = new Date(),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+    return [year, month, day].join('');
+}
+
 $('#saveImage').click(async function () {
     var saveImage = document.getElementById('saveImage');
     if (saveImage.innerHTML ==='Stop'){
@@ -70,9 +87,9 @@ $('#saveImage').click(async function () {
                 // download path depend on the browser setting, javascript can not specify
                 // File can not be saved when page has GET error,
                 // like 'http://localhost:5000/blah.png 404 (NOT FOUND)'
-                window.saveAs(blob, mapName+'_'+measure+'_'+ymd+'.png');
+                window.saveAs(blob, mapName+ymd+'.png');
             });
-        // clearInterval(draw_Interval);
+        clearInterval(draw_Interval);
         saveImage.innerHTML = 'Done';
     }
 })
