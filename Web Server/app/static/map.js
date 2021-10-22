@@ -28,7 +28,7 @@ References:
 */
 
 
-var map = L.map('map').setView(currPos, 18.0);
+var map = L.map('map').setView(currPos, 18);
 // To load the local map, need to access server machine ip instead of localhost in broswer
 var baseLayer = L.tileLayer('/static/maps/'+ mapName +'/{z}/{x}/{y}.png', {
                     minZoom: 17,
@@ -45,6 +45,7 @@ var markerLayer = L.circle(currPos, {
 
 var eleCurrPos = document.getElementById('current-position');
 var resJson
+var ele_currPos = document.getElementById('current-position');
 
 var getJson = async (callback) => {
     var res = await fetch('/getJson', {cache: "no-cache"});
@@ -59,6 +60,7 @@ function draw() {
     getJson(function () {
         markerLayer.setLatLng(currPos);
         polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
+        ele_currPos.innerHTML = currPos;
     })
 };
 

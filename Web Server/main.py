@@ -404,7 +404,7 @@ class GUI():
             self.pwd = filedialog.askdirectory(initialdir=opath)
             print(self.pwd)
             self.project_path = os.path.join(self.pwd,'{}.csv'.format(filename))
-            self.project_path_temp = os.path.join(self.pwd,'{}.txt'.format(filename))
+            self.project_path_raw = os.path.join(self.pwd,'{}.txt'.format(filename))
             self.project_path_json = os.path.join(jpath,'data.json')
 
 
@@ -434,7 +434,7 @@ class GUI():
         if os.path.exists(self.project_path):
             filename = datetime.datetime.now().strftime("data-%d-%m-%Y-%H-%M-%S")
             self.project_path = os.path.join(self.pwd,'{}.csv'.format(filename))
-            self.project_path_temp = os.path.join(self.pwd,'{}.txt'.format(filename))
+            self.project_path_raw = os.path.join(self.pwd,'{}.txt'.format(filename))
 
         def readserial_Demo(self,path=self.project_path):
 
@@ -567,23 +567,28 @@ class GUI():
                     outputlist = []
                     try:
                         temp=""
+                        
                         sensor_obj = pynmea2.parse(sensor.readline().decode('ascii', errors='replace').strip())
-                        gps_obj = pynmea2.parse(gps.readline().decode('ascii', errors='replace').strip())
-                        temp += f"{gps_obj.latitude},{gps_obj.longitude}"
-                        lats.append(gps_obj.latitude)
-                        longs.append(gps_obj.longitude)
-                        with open(self.project_path_json, 'w') as outputfile:
-                            data = [ list(points) for points in zip(lats,longs)]
-                            geojson = json.dumps({
+                        gps_line = gps.readline().decode('ascii', errors='replace').strip()
+                        if gps_line.split(",")[0] in ['$GPGLL']:
+                            gps_obj = pynmea2.parse(gps_line)
+                            temp += f"{gps_obj.latitude},{gps_obj.longitude}"
+                            lats.append(gps_obj.latitude)
+                            longs.append(gps_obj.longitude)
+                            with open(self.project_path_json, 'w') as outputfile:
+                                data = [ list(points) for points in zip(lats,longs)]
+                                geojson = json.dumps({
                                         'LatLongs': data ,
                                         'live': [lats[-1],longs[-1]]
                                         }, indent = 4)
-                            outputfile.write(geojson)
-                            outputfile.close()                       
+                                outputfile.write(geojson)
+                                outputfile.close()
+                        else:
+                            temp += f"{0},{0}"                 
                         for field in sensor_obj.data:
                             temp+= f",{field}"
                         
-                        with open(f"{self.project_path_temp}",'a') as outfile:
+                        with open(f"{self.project_path_raw}",'a') as outfile:
                             outfile.write(f"{temp}\n")
                             outfile.close
                         if self.PROGRAM_STATUS_OP:
@@ -592,7 +597,7 @@ class GUI():
                             self.PROGRAM_STATUS.set(f"Command: Disable Live Output\nData: --- ")
 
                         print(temp)
-                        time.sleep(1)
+                        time.sleep(0.125)
                     except Exception as e:
                             self.PROGRAM_STATUS.set(f"ERROR: CHECK PORTS!")
                             continue
@@ -624,7 +629,7 @@ class GUI():
             Generate final csv and delete temp files
             '''
             if os.path.exists(self.project_path):
-                f = open(self.project_path_temp,'r').readlines()
+                f = open(self.project_path_raw,'r').readlines()
                 for i in range(len(f)):
                     try:
                         if f[i].split(",")[2] == 'H':
@@ -636,11 +641,11 @@ class GUI():
                     except Exception as e:
                         print(e)
                         pass
-            os.remove(self.project_path_temp)
+            #os.remove(self.project_path_raw)
 
         try:
             self.threadFlag = False
-            if os.path.exists(self.project_path_temp):
+            if os.path.exists(self.project_path_raw):
                 generateCSV()
             self.START_SENSOR_BTN['state'] = tkinter.NORMAL
             self.STOP_SENSOR_BTN['state'] = tkinter.DISABLED
@@ -736,9 +741,6 @@ class GUI():
             self.PROGRAM_STATUS.set(f"Command: OPEN WEBSERVER \nSTATUS: Server: 'http:localhost:3152' ")
         else:
             self.PROGRAM_STATUS.set(f"Command: OPEN WEBSERVER \nSTATUS: Server is not running. ")
-
-
-        
 
 
 if __name__ == "__main__":
