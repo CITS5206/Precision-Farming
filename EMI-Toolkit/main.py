@@ -394,7 +394,7 @@ class GUI():
             # Make the default dir if it doesn't exist already
             opath = os.path.join(os.path.expanduser('~'),'Documents','EMI-Toolkit')
             #jpath = os.path.join(os.path.expanduser('~'),'Desktop','Web Server','app','static','liveFeed')
-            jpath = '../Web Server/app/static/liveFeed'
+            jpath = './app/static/liveFeed'
 
 
             if not os.path.exists(opath):
