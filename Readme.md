@@ -1,5 +1,5 @@
-# EMI Toolkit (v1.0)
-## Date : 20/09/2021
+# EMI Toolkit
+## Date : 23/10/2021
 
 # Team: 
     1. Arjun Panicker
@@ -23,32 +23,28 @@
 ### Prerequisites - Install Dependent Packages
     1. Download and install anaconda https://www.anaconda.com/
     2. Download or Clone this repo.
-    3. Open terminal [Linux/MacOS] or Open Anaconda Terminal [Windows] and navigate to Prerequisites/
+    
  
+### 3. Open terminal [Linux/MacOS] or Open Anaconda Terminal [Windows] and navigate to Prerequisites/
     cd Prerequisites/
 
-    4. Use the following command to create a conda environment
-    
+### 4. Use the following command to create a conda environment
+
     conda env create -f precision-farming-emitoolkit.yml
     
-    5. Activate the environment by,
-    
+### 5. Activate the environment by,
+
     conda activate emitoolkit
 
-### EMI Toolkit - Running the GUI
-    1. Navigate to EMI-Toolkit Folder
+## EMI Toolkit - Running the GUI
+### 1. Navigate to EMI-Toolkit Folder
     
     cd ..
     cd EMI-Toolkit/
-    
-    2. Run the main program by,
+### 2. Run the main program by,
 
     python3 main.py
 
-
-## Quick start for client
-Option 1. Open python GUI, connect hardwares and click "START WEBSERVER", then access web application via browser.  
-Option 2. Use an executable file to open the web application. (Ongoing development)
 
 
 ## Web Application
