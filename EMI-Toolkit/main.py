@@ -179,7 +179,7 @@ class GUI():
             self.CONTROL_LABEL = ttk.Label(self.MAINFRAME, text='CONTROL PANEL',justify=tkinter.CENTER,font=self.label_font)
             self.START_SENSOR_BTN = Button(self.MAINFRAME,text="START SENSOR ",command=self.readSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
             self.STOP_SENSOR_BTN = Button(self.MAINFRAME,text="STOP SENSOR ", command=self.stopSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.READ_OP_DATA = Button(self.MAINFRAME,text="LIVE OUTPUT(ON)", command=self.toggleOutput, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.READ_OP_DATA = Button(self.MAINFRAME,text="LIVE OUTPUT(OFF)", command=self.toggleOutput, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
 
             # END : CONTROL OPTIONS
 
