@@ -177,9 +177,9 @@ class GUI():
 
             # START : CONTROL OPTIONS
             self.CONTROL_LABEL = ttk.Label(self.MAINFRAME, text='CONTROL PANEL',justify=tkinter.CENTER,font=self.label_font)
-            self.START_SENSOR_BTN = Button(self.MAINFRAME,text="START SENSOR READING",command=self.readSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.STOP_SENSOR_BTN = Button(self.MAINFRAME,text="STOP SENSOR READING", command=self.stopSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.READ_OP_DATA = Button(self.MAINFRAME,text="ENABLE LIVE OUTPUT", command=self.toggleOutput, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.START_SENSOR_BTN = Button(self.MAINFRAME,text="START SENSOR ",command=self.readSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.STOP_SENSOR_BTN = Button(self.MAINFRAME,text="STOP SENSOR ", command=self.stopSensor, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.READ_OP_DATA = Button(self.MAINFRAME,text="LIVE OUTPUT(ON)", command=self.toggleOutput, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
 
             # END : CONTROL OPTIONS
 
@@ -687,10 +687,10 @@ class GUI():
             print(e)
 
     def toggleOutput(self):
-        if self.READ_OP_DATA.cget('text') == "ENABLE LIVE OUTPUT":
-            self.READ_OP_DATA.config(text='DISABLE LIVE OUTPUT')
-        elif self.READ_OP_DATA.cget('text') == 'DISABLE LIVE OUTPUT':
-            self.READ_OP_DATA.config(text='ENABLE LIVE OUTPUT')
+        if self.READ_OP_DATA.cget('text') == "LIVE OUTPUT(ON)":
+            self.READ_OP_DATA.config(text='LIVE OUTPUT(OFF)')
+        elif self.READ_OP_DATA.cget('text') == 'LIVE OUTPUT(OFF)':
+            self.READ_OP_DATA.config(text='LIVE OUTPUT(ON)')
         self.PROGRAM_STATUS_OP = not self.PROGRAM_STATUS_OP
 
     def startWebserver(self):
