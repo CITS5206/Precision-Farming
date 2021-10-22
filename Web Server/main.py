@@ -17,7 +17,6 @@
 # [1] - https://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python (Oct,2021)
 
 
-from posix import listdir
 import re
 import threading
 import subprocess
@@ -131,6 +130,7 @@ class GUI():
             self.LEGAL_FREQ_RATES = ['FREQUENCY (M.P.S)','1/10', '1/5', '1/2', '1', '2', '5', '10']
 
             self.PROGRAM_STATUS_OP = False
+            self.webserver_isAlive = False
 
     def GUISetupOptions(self):
 
@@ -168,8 +168,8 @@ class GUI():
             # START : FILE OPTIONS
             self.FILE_LABEL = ttk.Label(self.MAINFRAME, text="FILE OPTIONS",justify=tkinter.CENTER,font=self.label_font)
             self.SAVE_PROJECT_BTN = Button(self.MAINFRAME, text="SAVE PROJECT", command=self.saveProject,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y,state='disabled')
-            self.EXISTING_FOLDER_BTN = Button(self.MAINFRAME, text="OUTPUT FOLDER", command=self.saveProject,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y, state="disabled")
-            self.PREV_PROJECTS_BTN = Button(self.MAINFRAME, text="EXPLORE PREVIOUS PROJECTS", command=self.prevProjects,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y, state="normal")
+            self.EXISTING_FOLDER_BTN = Button(self.MAINFRAME, text="OUTPUT FOLDER", command=self.projectOutput,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y, state="disabled")
+            self.PREV_PROJECTS_BTN = Button(self.MAINFRAME, text="PREVIOUS PROJECTS", command=self.prevProjects,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y, state="normal")
 
             # END : FILE OPTIONS
    
@@ -189,7 +189,7 @@ class GUI():
             self.VISUAL_LABEL = ttk.Label(self.MAINFRAME, text='VISUALIZATION',justify=tkinter.CENTER,font=self.label_font)
             self.START_WEBSEVER_BTN = Button(self.MAINFRAME,text="START WEBSERVER",command=self.startWebserver, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
             self.STOP_WEBSEVER_BTN = Button(self.MAINFRAME,text="STOP WEBSERVER",command=self.stopWebserver, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.OPEN_WEBSEVER_BTN = Button(self.MAINFRAME,text="OPEN WEB BROWSER",command=self.openBrowser, state="normal",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
+            self.OPEN_WEBSEVER_BTN = Button(self.MAINFRAME,text="OPEN WEB BROWSER",command=self.openBrowser, state="disabled",width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
 
             # END: VISUALIZATION
 
@@ -270,7 +270,7 @@ class GUI():
 
         else:
             self.PROGRAM_STATUS.set("Command: Confirm Selection\nStatus: OK")
-            self.START_WEBSEVER_BTN['state'] = tkinter.NORMAL
+            #self.START_WEBSEVER_BTN['state'] = tkinter.NORMAL
             self.GUISelectionToggle()
 
         
@@ -395,6 +395,7 @@ class GUI():
             filename = datetime.datetime.now().strftime("data-%d-%m-%Y")
         
             self.pwd = filedialog.askdirectory(initialdir=opath)
+            print(self.pwd)
             self.project_path = os.path.join(self.pwd,'{}.csv'.format(filename))
             self.project_path_temp = os.path.join(self.pwd,'{}.txt'.format(filename))
             self.project_path_json = os.path.join(self.pwd,'data.json')
@@ -404,6 +405,7 @@ class GUI():
                 self.START_SENSOR_BTN['state'] = tkinter.NORMAL
                 self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nPATH: {}".format(self.project_path))
                 self.SAVE_PROJECT_BTN.config(text="FOLDER SELECTED")
+                self.EXISTING_FOLDER_BTN['state'] = tkinter.NORMAL
             else:
                 self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nSTATUS: WARNING - FOUND EXISTING FILES")
                 self.MAINFRAME.update()
@@ -412,11 +414,13 @@ class GUI():
                         self.START_SENSOR_BTN['state'] = tkinter.NORMAL 
                         self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nPATH: {}".format(self.project_path))
                         self.SAVE_PROJECT_BTN.config(text="FOLDER SELECTED")
+                        self.EXISTING_FOLDER_BTN['state'] = tkinter.NORMAL
                 else:
                         self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nSTATUS: RESELECT PROJECT FOLDER")
                         self.MAINFRAME.update()
         except Exception as e:
             print(e)
+            self.EXISTING_FOLDER_BTN['state'] = tkinter.DISABLED
 
     def readSensor(self):
 
@@ -466,6 +470,10 @@ class GUI():
                                 nmeaobj = pynmea2.parse(dualem.__next__().strip())
                         g_data = pynmea2.parse(gps.__next__())
                         checklist.append([g_data.latitude, g_data.longitude])
+                    if self.PROGRAM_STATUS_OP:
+                        self.PROGRAM_STATUS.set(f"Command: Live Output\nSensor-Data:{nmeaobj.data}\nGPS-Data: {g_data.latitude},{g_data.longitude}")
+                    else:
+                        self.PROGRAM_STATUS.set(f"Command: Disable Live Output\nSensor-Data: ---\nGPS-Data: --- ")
                     time.sleep(2)
                 except Exception as e:
                     print(e)
@@ -476,7 +484,7 @@ class GUI():
                             print(output_list)
                             writer.writerow(output_list)
                             outfile.close()
-                    
+  
                 if not self.threadFlag:
                     print(f"Terminated {threading.current_thread().name}")
                           
@@ -564,16 +572,18 @@ class GUI():
                     except Exception as e:
                             self.PROGRAM_STATUS.set(f"ERROR: CHECK PORTS!")
                             continue
+            if not self.threadFlag:
+                    print(f"Terminated {threading.current_thread().name}")
 
         self.threadFlag = True
         if not self.DUALEM_PORT.get()=='Demo' and not self.GPS_PORT.get() == 'Demo':
             print("Startring Thread for readSerial()")
-            self.worker1 = threading.Thread(target=readserial_Prod,name="DemoSerialProd", args=(self,self.project_path), daemon=True)
-            self.worker1.start()
+            self.worker = threading.Thread(target=readserial_Prod,name="DemoSerialProd", args=(self,self.project_path), daemon=True)
+            self.worker.start()
         if self.DUALEM_PORT.get()=='Demo' and self.GPS_PORT.get() == 'Demo':
             print("Startring Demo Thread for readSerial()")
-            self.worker1 = threading.Thread(target=readserial_Demo,name="DemoSerialDemo", args=(self,self.project_path), daemon=True)
-            self.worker1.start()
+            self.worker = threading.Thread(target=readserial_Demo,name="DemoSerialDemo", args=(self,self.project_path), daemon=True)
+            self.worker.start()
         
 
         self.STOP_SENSOR_BTN['state'] = tkinter.NORMAL
@@ -582,8 +592,13 @@ class GUI():
         self.MAINFRAME.update() 
     
     def stopSensor(self):
+        '''
+        Function to stop sensor reading
+        '''
         def generateCSV():
-            datalist =[]
+            '''
+            Generate final csv and delete temp files
+            '''
             if os.path.exists(self.project_path):
                 f = open(self.project_path_temp,'r').readlines()
                 for i in range(len(f)):
@@ -597,7 +612,6 @@ class GUI():
                     except Exception as e:
                         print(e)
                         pass
-            
             os.remove(self.project_path_temp)
 
         try:
@@ -606,21 +620,35 @@ class GUI():
                 generateCSV()
             self.START_SENSOR_BTN['state'] = tkinter.NORMAL
             self.STOP_SENSOR_BTN['state'] = tkinter.DISABLED
-            self.stopWebserver()
             self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
+            self.PROGRAM_STATUS.set(f"Command: STOP SENSOR \nSTATUS: Sensor Reading Stopped")
             return True
 
         except Exception as e:
             print(e)
-            print("NO PROCESS TO TERMINATE")
             return False
         
     def prevProjects(self):
+        '''
+        Function to open ~/User/Downloads/EMI-Toolkit/ Folder
+        '''
         opath = os.path.join(os.path.expanduser('~'),'Documents','EMI-Toolkit')
         if not os.path.exists(opath):
                     os.mkdir(opath)
         try:
             proc = subprocess.Popen(['open',opath])
+        except Exception as e:
+            print(e)
+
+    def projectOutput(self):
+        '''
+        Function to open ~/User/Downloads/EMI-Toolkit/ {path}
+        '''
+
+        try:
+            if os.path.exists(self.pwd):
+                print(self.pwd)
+                subprocess.Popen(['open',f"{self.pwd}/"])
         except Exception as e:
             print(e)
 
@@ -630,40 +658,60 @@ class GUI():
         elif self.READ_OP_DATA.cget('text') == 'DISABLE LIVE OUTPUT':
             self.READ_OP_DATA.config(text='ENABLE LIVE OUTPUT')
         self.PROGRAM_STATUS_OP = not self.PROGRAM_STATUS_OP
-        print(self.PROGRAM_STATUS_OP)
 
     def startWebserver(self):
+        '''
+        Function to start the webserver
+        '''
 
         if os.path.exists("server.py"):
             print("Found sever")
             try:
                 self.server = subprocess.Popen(["python3", "server.py"])
                 self.PROGRAM_STATUS.set(f"Command: START WEBSERVER \nSTATUS: Server: {self.server.pid} ID is running.")
+                self.webserver_isAlive = True
             except Exception as e:
                 print(e)
                 self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
 
             self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
             self.STOP_WEBSEVER_BTN['state'] = tkinter.NORMAL
+            self.OPEN_WEBSEVER_BTN['state'] = tkinter.NORMAL
+
         else:
             self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
+            self.OPEN_WEBSEVER_BTN['state'] = tkinter.DISABLED
 
     def stopWebserver(self):
+        '''
+        Function to stop the webserver
+        '''
         try:
-            if self.server.pid:
+            if self.webserver_isAlive:
                 self.server.terminate()
+                self.webserver_isAlive = False
             self.PROGRAM_STATUS.set(f"Command: START WEBSERVER \nSTATUS: Server: {self.server.pid} ID is terminated.")
             self.START_WEBSEVER_BTN['state'] = tkinter.NORMAL
             self.STOP_WEBSEVER_BTN['state'] = tkinter.DISABLED
+            self.OPEN_WEBSEVER_BTN['state'] = tkinter.DISABLED
 
         except:
             print("webserver not running")
             
-
     def openBrowser(self):
-        webbrowser.open("http:localhost:3152")
+        '''
+        Function to open default web browser port = 3152
+        '''
+        if self.webserver_isAlive:
+            webbrowser.open("http:localhost:3152")
+            self.PROGRAM_STATUS.set(f"Command: OPEN WEBSERVER \nSTATUS: Server: 'http:localhost:3152' ")
+        else:
+            self.PROGRAM_STATUS.set(f"Command: OPEN WEBSERVER \nSTATUS: Server is not running. ")
 
-    
+
+        
+
+
 if __name__ == "__main__":
     try:
         gui = GUI()
