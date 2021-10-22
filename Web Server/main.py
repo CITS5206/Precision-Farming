@@ -316,10 +316,13 @@ class GUI():
 
         if sys.platform.startswith('win'):
             ports = serial.tools.list_ports.comports()
+            self.PROGRAM_OS = 'win'
         elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
             ports = glob.glob('/dev/tty[A-Za-z]*')
+            self.PROGRAM_OS = 'unix'
         elif sys.platform.startswith('darwin'):
             ports = glob.glob('/dev/tty.*')
+            self.PROGRAM_OS = 'mac'
         else:
             raise EnvironmentError('Unsupported platform')
 
@@ -390,15 +393,20 @@ class GUI():
             # Create a default output folder
             # Make the default dir if it doesn't exist already
             opath = os.path.join(os.path.expanduser('~'),'Documents','EMI-Toolkit')
+            #jpath = os.path.join(os.path.expanduser('~'),'Desktop','Web Server','app','static','liveFeed')
+            jpath = '../Web Server/app/static/liveFeed'
+
+
             if not os.path.exists(opath):
                     os.mkdir(opath)
-            filename = datetime.datetime.now().strftime("data-%d-%m-%Y")
+            filename = datetime.datetime.now().strftime("data-%d-%m-%Y-%H-%M-%S")
         
             self.pwd = filedialog.askdirectory(initialdir=opath)
             print(self.pwd)
             self.project_path = os.path.join(self.pwd,'{}.csv'.format(filename))
             self.project_path_temp = os.path.join(self.pwd,'{}.txt'.format(filename))
-            self.project_path_json = os.path.join(self.pwd,'data.json')
+            self.project_path_json = os.path.join(jpath,'data.json')
+
 
 
             if not os.path.exists(self.project_path):
@@ -423,8 +431,13 @@ class GUI():
             self.EXISTING_FOLDER_BTN['state'] = tkinter.DISABLED
 
     def readSensor(self):
+        if os.path.exists(self.project_path):
+            filename = datetime.datetime.now().strftime("data-%d-%m-%Y-%H-%M-%S")
+            self.project_path = os.path.join(self.pwd,'{}.csv'.format(filename))
+            self.project_path_temp = os.path.join(self.pwd,'{}.txt'.format(filename))
 
         def readserial_Demo(self,path=self.project_path):
+
             f1 = open("dualem-data.txt",'r')
             f2 = open("gps-data.txt",'r')
             dualem = iter(f1.readlines())
@@ -458,7 +471,8 @@ class GUI():
                                     'Temperature [deg]'
                                     ))
             outfile.close()
-
+            lats=[]
+            longs=[]
             while self.threadFlag:
                 checklist=[]
                 output_list=[]
@@ -470,6 +484,16 @@ class GUI():
                                 nmeaobj = pynmea2.parse(dualem.__next__().strip())
                         g_data = pynmea2.parse(gps.__next__())
                         checklist.append([g_data.latitude, g_data.longitude])
+                        lats.append(g_data.latitude)
+                        longs.append(g_data.longitude)
+                        with open(self.project_path_json, 'w') as outputfile:
+                            data = [ list(points) for points in zip(lats,longs)]
+                            geojson = json.dumps({
+                                        'LatLongs': data ,
+                                        'live': [lats[-1],longs[-1]]
+                                        }, indent = 4)
+                            outputfile.write(geojson)
+                            outputfile.close() 
                     if self.PROGRAM_STATUS_OP:
                         self.PROGRAM_STATUS.set(f"Command: Live Output\nSensor-Data:{nmeaobj.data}\nGPS-Data: {g_data.latitude},{g_data.longitude}")
                     else:
@@ -636,7 +660,10 @@ class GUI():
         if not os.path.exists(opath):
                     os.mkdir(opath)
         try:
-            proc = subprocess.Popen(['open',opath])
+            if self.PROGRAM_OS == 'unix':
+                subprocess.Popen(['pcmanfm',opath])
+            else:
+                subprocess.Popen(['open',opath])
         except Exception as e:
             print(e)
 
@@ -647,8 +674,10 @@ class GUI():
 
         try:
             if os.path.exists(self.pwd):
-                print(self.pwd)
-                subprocess.Popen(['open',f"{self.pwd}/"])
+                if self.PROGRAM_OS == 'unix':
+                    subprocess.Popen(['pcmanfm',f"{self.pwd}/"])
+                else:
+                    subprocess.Popen(['open',f"{self.pwd}/"])
         except Exception as e:
             print(e)
 
