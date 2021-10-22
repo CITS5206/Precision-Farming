@@ -94,16 +94,22 @@ def getMapNames():
             list, folder names
     '''
     # TODO: Test@Clariza
-    dir = '../app/static/maps'
-    # Create directory if not exitst
-    Path(dir).mkdir(parents=True, exist_ok=True)
+
+    
+    path = os.path.join(os.getcwd(),'app','static','maps')
+    # dir = '../app/static/maps'
+    # # Create directory if not exitst
+    if os.path.exists(path):
+        print(f"{path}")
+    else:
+        Path(path).mkdir(parents=True, exist_ok=True)
     maps = []
     try:
         # List all entries in dir
-        entries = os.listdir(dir)
+        entries = os.listdir(path)
         for e in entries:
             # only include folders
-            if os.path.isdir(os.path.join(dir, e)):
+            if os.path.isdir(os.path.join(path, e)):
                 maps.append(e)
     except:
         pass
