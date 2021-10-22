@@ -94,7 +94,7 @@ def getMapNames():
             list, folder names
     '''
     # TODO: Test@Clariza
-    dir = './app/static/maps'
+    dir = '../app/static/maps'
     # Create directory if not exitst
     Path(dir).mkdir(parents=True, exist_ok=True)
     maps = []

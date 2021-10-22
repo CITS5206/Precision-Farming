@@ -25,7 +25,9 @@
 from flask              import Flask
 from flask_jsglue       import JSGlue
 
-app = Flask(__name__,)
+app = Flask(__name__,
+        static_folder='./static/',
+        template_folder='./templates/')
 jsglue = JSGlue(app)
 
 
