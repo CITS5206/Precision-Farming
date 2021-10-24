@@ -58,6 +58,7 @@ dependencies:
     - pytz==2021.1
     - sqlalchemy==1.4.25
     - sqlparse==0.4.2
+    - selenium
     - toml==0.10.2
     - werkzeug==2.0.1
     - zipp==3.5.0

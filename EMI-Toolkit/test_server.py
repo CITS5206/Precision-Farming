@@ -14,7 +14,7 @@
  Version: 1.0
  State : Stable
  How to use: 
-     - python3 server-test.py
+     - python3 test_server.py
 """
 
 import unittest

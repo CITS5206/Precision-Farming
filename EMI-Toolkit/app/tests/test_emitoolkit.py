@@ -21,6 +21,8 @@
  Version: 1.0
  State : Stable
  How to use: 
+     - Download the web driver from https://chromedriver.chromium.org/downloads
+     - add it to your path variable as mentioned in : https://www.selenium.dev/documentation/getting_started/installing_browser_drivers/
      - python3 test_emitoolkit.py
 """
 
@@ -47,7 +49,7 @@ class TestFarm():
     self.driver.quit()
   
   def test_Map_exists(self):
-    self.driver.get("http://localhost:5000/")
+    self.driver.get("http://localhost:3152/")
     assert self.driver.title == "PrecisionFarming-Map"
     elements = self.driver.find_elements(By.XPATH, "//th[contains(.,\'Field\')]")
     assert len(elements) > 0
@@ -67,7 +69,7 @@ class TestFarm():
       dest = './app/static/maps'
       shutil.rmtree(dir)
 
-      self.driver.get("http://localhost:5000/")
+      self.driver.get("http://localhost:3152/")
       assert self.driver.title == "PrecisionFarming-Map"
       elements = self.driver.find_elements(By.XPATH, "//th[contains(.,\'Field\')]")
       assert not len(elements)
