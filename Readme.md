@@ -1,6 +1,6 @@
 # EMI Toolkit
 ## Date : 23/10/2021
-
+![EMI-Toolkit Logo](EMI-Toolkit/logo.ico?raw=true "EMI-Toolkit Logo")
 # Team: 
     1. Arjun Panicker
     2. Clariza Look
