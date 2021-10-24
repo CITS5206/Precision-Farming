@@ -22,6 +22,7 @@
 * State : Stable 
 '''
 
+from genericpath import exists
 from app        import app
 from flask      import render_template, request
 import json
@@ -32,8 +33,12 @@ from pathlib    import Path
 def tracking():
     mapName = request.args.get('mapName')
     # measure = request.args.get('measure')
-    currPos = getJson()['live']
-    return render_template('tracking.html', title='PrecisionFarming-Tracking', 
+    
+    try:
+        currPos = getJson()['live']
+    except:
+        currPos = [0,0]
+    return render_template('tracking.html', title='EMI-Toolkit-Tracking', 
                             # measure = measure, 
                             currPos = currPos, mapName=mapName)
 
@@ -41,34 +46,43 @@ def tracking():
 def heatmap():
     mapName = request.args.get('mapName')
     measure = request.args.get('measure')
-    currPos = getJson()['live']
-    return render_template('heatmap.html', title='PrecisionFarming-Heatmap', 
+    try:
+        currPos = getJson()['live']
+    except:
+        currPos = [0,0]
+
+    return render_template('heatmap.html', title='EMI-Toolkit-Heatmap', 
                             measure = measure, 
                             currPos = currPos, mapName=mapName)
 
 @app.route('/index')
 def index():
-    return render_template('index.html', title='PrecisionFarming-Home')
+    return render_template('index.html', title='EMI-Toolkit-Home')
 
 @app.route('/')
 @app.route('/map')
 def map():
     lstMap = getMapNames()
-    return render_template('map.html', title='PrecisionFarming-Map', lstMap=lstMap)
+    return render_template('map.html', title='EMI-Toolkit-Map', lstMap=lstMap)
 
 @app.route('/getJson')
-def getJson(path='./app/static/liveFeed/data.json'):
+def getJson():
     '''
-    getJson
-        :parameters:
-            string, path of th file (default: './app/static/liveFeed/d.json')
-        
+    getJson    
         :returns:
             json, file content
     '''
-    f = open(path, 'r')
-    data = json.load(f)
-    return data
+    try:
+        path = os.path.join(os.getcwd(),'app','static','incoming-data','data.json')
+        if os.path.exists(path):
+            f = open(path, 'r')
+            data = json.load(f)
+            return data
+        else:
+            raise FileNotFoundError("data file missing. Check code")
+    except Exception as e:
+        print(e)
+
 
 @app.route('/getHMJson')
 def getHMJson(path='./app/static/liveFeed/heatmap.json'):
@@ -93,24 +107,24 @@ def getMapNames():
         :returns:
             list, folder names
     '''
-    # TODO: Test@Clariza
 
-    
     path = os.path.join(os.getcwd(),'app','static','maps')
     # dir = '../app/static/maps'
     # # Create directory if not exitst
     if os.path.exists(path):
         print(f"{path}")
-    else:
-        Path(path).mkdir(parents=True, exist_ok=True)
-    maps = []
-    try:
-        # List all entries in dir
-        entries = os.listdir(path)
-        for e in entries:
+        maps = []
+        try:
+            # List all entries in dir
+            entries = os.listdir(path)
+            for e in entries:
             # only include folders
-            if os.path.isdir(os.path.join(path, e)):
-                maps.append(e)
-    except:
-        pass
-    return maps
+                if os.path.isdir(os.path.join(path, e)):
+                    maps.append(e)
+        except:
+            pass
+        return maps
+    else:
+        return []
+        
+

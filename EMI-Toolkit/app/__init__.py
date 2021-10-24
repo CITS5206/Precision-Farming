@@ -30,6 +30,4 @@ app = Flask(__name__,
         template_folder='templates')
 jsglue = JSGlue(app)
 
-
-
 from app import routes

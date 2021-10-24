@@ -392,9 +392,8 @@ class GUI():
         try:
             # Create a default output folder
             # Make the default dir if it doesn't exist already
-            opath = os.path.join(os.path.expanduser('~'),'Documents','EMI-Toolkit')
-            #jpath = os.path.join(os.path.expanduser('~'),'Desktop','Web Server','app','static','liveFeed')
-            jpath = './app/static/liveFeed'
+            opath = os.path.join(os.path.expanduser('~'),'Documents','EMI-Toolkit')            
+            jpath = os.path.join(os.getcwd(),'app','static','incoming-data')
 
 
             if not os.path.exists(opath):
@@ -438,8 +437,11 @@ class GUI():
 
         def readserial_Demo(self,path=self.project_path):
 
-            f1 = open("dualem-data.txt",'r')
-            f2 = open("gps-data.txt",'r')
+            d1 = os.path.join(os.getcwd(),'app','static','demo','dualem-data.txt')
+            g1 = os.path.join(os.getcwd(),'app','static','demo','gps-data.txt') 
+
+            f1 = open(d1,'r')
+            f2 = open(g1,'r')
             dualem = iter(f1.readlines())
             gps = iter(f2.readlines())
             f1.close()
