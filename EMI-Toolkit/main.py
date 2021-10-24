@@ -131,6 +131,13 @@ class GUI():
 
             self.PROGRAM_STATUS_OP = False
             self.webserver_isAlive = False
+            self.project_path = ""
+            self.project_path_raw= ""
+            self.project_path_json = ""
+            
+            if sys.platform.startswith('win'): self.PROGRAM_OS = 'win'
+            if sys.platform.startswith('linux') or sys.platform.startswith('cygwin'): self.PROGRAM_OS = 'unix'
+            if sys.platform.startswith('darwin'): self.PROGRAM_OS = 'mac'
 
     def GUISetupOptions(self):
 
@@ -329,8 +336,8 @@ class GUI():
         result = ['Demo'] # Remove this in production software
         
         for eachPort in ports:
-            print(eachPort.lower())
             if 'usb' in eachPort.lower():
+                print("Valid-Port: ",eachPort.lower())
                 try:
                     serial.Serial(eachPort).close()
                     result.append(eachPort)
@@ -400,8 +407,13 @@ class GUI():
                     os.mkdir(opath)
             filename = datetime.datetime.now().strftime("data-%d-%m-%Y-%H-%M-%S")
         
+            # self.pwd = filedialog.askdirectory(initialdir=opath)
             self.pwd = filedialog.askdirectory(initialdir=opath)
-            print(self.pwd)
+            if not self.pwd:
+                self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nERR: {}".format('Make sure to select a valid folder'))
+                raise ValueError("Make sure to select a valid folder")
+           
+            print("Chosen output dir: ",self.pwd)
             self.project_path = os.path.join(self.pwd,'{}.csv'.format(filename))
             self.project_path_raw = os.path.join(self.pwd,'{}.txt'.format(filename))
             self.project_path_json = os.path.join(jpath,'data.json')
@@ -426,7 +438,6 @@ class GUI():
                         self.PROGRAM_STATUS.set("Command: SAVE PROJECT \nSTATUS: RESELECT PROJECT FOLDER")
                         self.MAINFRAME.update()
         except Exception as e:
-            print(e)
             self.EXISTING_FOLDER_BTN['state'] = tkinter.DISABLED
 
     def readSensor(self):
@@ -609,11 +620,11 @@ class GUI():
         self.threadFlag = True
         if not self.DUALEM_PORT.get()=='Demo' and not self.GPS_PORT.get() == 'Demo':
             print("Startring Thread for readSerial()")
-            self.worker = threading.Thread(target=readserial_Prod,name="DemoSerialProd", args=(self,self.project_path), daemon=True)
+            self.worker = threading.Thread(target=readserial_Prod,name="ThreadProduction", args=(self,self.project_path), daemon=True)
             self.worker.start()
         if self.DUALEM_PORT.get()=='Demo' and self.GPS_PORT.get() == 'Demo':
             print("Startring Demo Thread for readSerial()")
-            self.worker = threading.Thread(target=readserial_Demo,name="DemoSerialDemo", args=(self,self.project_path), daemon=True)
+            self.worker = threading.Thread(target=readserial_Demo,name="ThreadDemo", args=(self,self.project_path), daemon=True)
             self.worker.start()
         
 
@@ -635,7 +646,11 @@ class GUI():
                 for i in range(len(f)):
                     try:
                         if f[i].split(",")[2] == 'H':
-                            c = f[i].split(",")[0:2]+f[i].split(",")[3:] + f[i+1].split(",")[4:] + f[i+2].split(",")[3:]+f[i+3].split(",")[3:]
+                            H = f[i+0].strip('\n').split(",")[0:2]+f[i].strip('\n').split(",")[3:]
+                            I = f[i+1].strip('\n').split(",")[4:]
+                            A = f[i+2].strip('\n').split(",")[3:]
+                            B = f[i+3].strip('\n').split(",")[3:]
+                            c =  H+ I +A +B
                             with open(self.project_path,'a') as outfile:
                                 writer = csv.writer(outfile)
                                 writer.writerow(c)
@@ -653,10 +668,8 @@ class GUI():
             self.STOP_SENSOR_BTN['state'] = tkinter.DISABLED
             self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
             self.PROGRAM_STATUS.set(f"Command: STOP SENSOR \nSTATUS: Sensor Reading Stopped")
-            return True
 
         except Exception as e:
-            print(e)
             return False
         
     def prevProjects(self):
@@ -669,8 +682,12 @@ class GUI():
         try:
             if self.PROGRAM_OS == 'unix':
                 subprocess.Popen(['pcmanfm',opath])
-            else:
+            elif self.PROGRAM_OS == 'win':
+                subprocess.Popen(['start',opath])
+            elif self.PROGRAM_OS=='mac':
                 subprocess.Popen(['open',opath])
+            else:
+                raise OSError
         except Exception as e:
             print(e)
 
@@ -683,8 +700,12 @@ class GUI():
             if os.path.exists(self.pwd):
                 if self.PROGRAM_OS == 'unix':
                     subprocess.Popen(['pcmanfm',f"{self.pwd}/"])
-                else:
+                elif self.PROGRAM_OS == 'win':
+                    subprocess.Popen(['start',f"{self.pwd}/"])
+                elif self.PROGRAM_OS=='mac':
                     subprocess.Popen(['open',f"{self.pwd}/"])
+                else:
+                    raise OSError
         except Exception as e:
             print(e)
 
@@ -701,13 +722,12 @@ class GUI():
         '''
 
         if os.path.exists("server.py"):
-            print("Found sever")
+            print("----- Initialising Server -----")
             try:
                 self.server = subprocess.Popen(["python3", "server.py"])
                 self.PROGRAM_STATUS.set(f"Command: START WEBSERVER \nSTATUS: Server: {self.server.pid} ID is running.")
                 self.webserver_isAlive = True
             except Exception as e:
-                print(e)
                 self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
 
             self.START_WEBSEVER_BTN['state'] = tkinter.DISABLED
@@ -732,7 +752,7 @@ class GUI():
             self.OPEN_WEBSEVER_BTN['state'] = tkinter.DISABLED
 
         except:
-            print("webserver not running")
+            print("Webserver not running")
             
     def openBrowser(self):
         '''
@@ -750,9 +770,12 @@ if __name__ == "__main__":
         gui = GUI()
         gui.GUIMainloop()
     except Exception as e:
-        print(e)
+        pass
     finally:
-        gui.stopSensor()
+        try:
+            gui.stopSensor()
+        except:
+            pass
         
 
         
