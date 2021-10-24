@@ -146,7 +146,7 @@ class GUI():
         
             # SETUP OPTIONS --> SCAN AND VERIY 
             self.SCAN_BTN = Button(self.MAINFRAME, text="SCAN PORTS", command=self.scanPorts,width=self.button_width,padx=self.button_padding_x,pady=self.button_padding_y)
-            self.CONFIRM_BTN = Button(self.MAINFRAME, text="CONFIRM SELECTION", command=self.GUISanityCheck,state="disabled",width=19,pady=2,padx=2, bg="#c90231")
+            self.CONFIRM_BTN = Button(self.MAINFRAME, text="CONFIRM SELECTION", command=self.GUISanityCheck,state="disabled",width=19,pady=2,padx=2)
         
             # SETUP OPTIONS --> SCAN DUALEM PORT
             #self.PORT_LABEL = ttk.Label(self.MAINFRAME, text="PORT NAME",justify=tkinter.LEFT, width=10)
