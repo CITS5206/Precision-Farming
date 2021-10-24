@@ -4,7 +4,7 @@ channels:
 dependencies:
   - ca-certificates=2021.7.5
   - certifi=2021.5.30
-  - libcxx=10.0.0=1
+  - libcxx=10.0.0
   - libffi=3.3
   - ncurses=6.2
   - openssl
@@ -26,7 +26,6 @@ dependencies:
     - autopep8==1.5.7
     - click==8.0.1
     - colorama==0.4.4
-    - django==3.2.7
     - flask==2.0.1
     - flask-jsglue==0.3.1
     - flask-migrate==3.1.0
