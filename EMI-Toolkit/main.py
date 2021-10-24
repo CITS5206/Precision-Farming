@@ -650,7 +650,7 @@ class GUI():
                             I = f[i+1].strip('\n').split(",")[4:]
                             A = f[i+2].strip('\n').split(",")[3:]
                             B = f[i+3].strip('\n').split(",")[3:]
-                            c =  H+ I +A +B
+                            c =  H + I + A + B
                             with open(self.project_path,'a') as outfile:
                                 writer = csv.writer(outfile)
                                 writer.writerow(c)
