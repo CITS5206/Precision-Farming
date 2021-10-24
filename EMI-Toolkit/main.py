@@ -17,15 +17,12 @@
 # [1] - https://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python (Oct,2021)
 
 
-import re
 import threading
 import subprocess
 import tkinter
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-from tkinter import font
-from typing import Collection
 from tkinter import messagebox
 import serial
 import sys
@@ -37,7 +34,6 @@ import time
 import webbrowser
 import pynmea2
 import csv
-import itertools
 import json
 
 
@@ -58,7 +54,6 @@ class GUI():
             None
                     
     """
-
     def __init__(self):
         """ Initialize a GUI Window
             :returns:
@@ -279,8 +274,7 @@ class GUI():
             self.PROGRAM_STATUS.set("Command: Confirm Selection\nStatus: OK")
             #self.START_WEBSEVER_BTN['state'] = tkinter.NORMAL
             self.GUISelectionToggle()
-
-        
+ 
     def GUISelectionToggle(self):
         '''
         Function to toggle selection on or off
@@ -447,12 +441,15 @@ class GUI():
             self.project_path_raw = os.path.join(self.pwd,'{}.txt'.format(filename))
 
         def readserial_Demo(self,path=self.project_path):
+            try:
 
-            d1 = os.path.join(os.getcwd(),'app','static','demo','dualem-data.txt')
-            g1 = os.path.join(os.getcwd(),'app','static','demo','gps-data.txt') 
+                d1 = os.path.join(os.getcwd(),'app','static','demo','dualem-data.txt')
+                g1 = os.path.join(os.getcwd(),'app','static','demo','gps-data.txt') 
 
-            f1 = open(d1,'r')
-            f2 = open(g1,'r')
+                f1 = open(d1,'r')
+                f2 = open(g1,'r')
+            except FileNotFoundError:
+                raise FileNotFoundError("Make sure your curent directory is ..../EMI-Toolkit/")
             dualem = iter(f1.readlines())
             gps = iter(f2.readlines())
             f1.close()
@@ -764,19 +761,14 @@ class GUI():
         else:
             self.PROGRAM_STATUS.set(f"Command: OPEN WEBSERVER \nSTATUS: Server is not running. ")
 
-
 if __name__ == "__main__":
     try:
         gui = GUI()
         gui.GUIMainloop()
     except Exception as e:
+        print("Unable to start the app, check files")
         pass
-    finally:
-        try:
-            gui.stopSensor()
-        except:
-            pass
-        
+
 
         
 
