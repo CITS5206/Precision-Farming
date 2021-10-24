@@ -498,7 +498,7 @@ class GUI():
                         self.PROGRAM_STATUS.set(f"Command: Live Output\nSensor-Data:{nmeaobj.data}\nGPS-Data: {g_data.latitude},{g_data.longitude}")
                     else:
                         self.PROGRAM_STATUS.set(f"Command: Disable Live Output\nSensor-Data: ---\nGPS-Data: --- ")
-                    time.sleep(2)
+                    time.sleep(0.1)
                 except Exception as e:
                     print(e)
                 if len(checklist) ==5:

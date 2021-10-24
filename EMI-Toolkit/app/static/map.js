@@ -28,7 +28,7 @@ References:
 */
 
 
-var map = L.map('map').setView(currPos, 18);
+var map = L.map('map').setView(currPos, 19);
 // To load the local map, need to access server machine ip instead of localhost in broswer
 var baseLayer = L.tileLayer('/static/maps/'+ mapName +'/{z}/{x}/{y}.png', {
                     minZoom: 17,
