@@ -1,6 +1,6 @@
 # EMI Toolkit
 ## Date : 23/10/2021
-
+![EMI-Toolkit Logo](EMI-Toolkit/logo.ico?raw=true "EMI-Toolkit Logo")
 # Team: 
     1. Arjun Panicker
     2. Clariza Look
@@ -28,9 +28,13 @@
 ### 3. Open terminal [Linux/MacOS] or Open Anaconda Terminal [Windows] and navigate to Prerequisites/
     cd Prerequisites/
 
-### 4. Use the following command to create a conda environment
+### 4a. Use the following command to create a conda environment [Windows]
 
-    conda env create -f precision-farming-emitoolkit.yml
+    conda env create -f windows-precision-farming-emitoolkit.yml
+
+### 4b. Use the following command to create a conda environment [MacOS]
+
+    conda env create -f mac-precision-farming-emitoolkit.yml
     
 ### 5. Activate the environment by,
 
