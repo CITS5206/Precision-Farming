@@ -317,6 +317,10 @@ class GUI():
 
         if sys.platform.startswith('win'):
             ports = serial.tools.list_ports.comports()
+            wp = []
+            for p in ports:
+                wp.append(p.device)
+            ports = wp
             self.PROGRAM_OS = 'win'
         elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
             ports = glob.glob('/dev/tty[A-Za-z]*')
