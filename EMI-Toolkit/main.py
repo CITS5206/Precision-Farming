@@ -36,6 +36,9 @@ import pynmea2
 import csv
 import json
 
+###### Server Modules Import ######
+from flask              import Flask
+from flask_jsglue       import JSGlue
 
 
 
@@ -684,7 +687,8 @@ class GUI():
             if self.PROGRAM_OS == 'unix':
                 subprocess.Popen(['pcmanfm',opath])
             elif self.PROGRAM_OS == 'win':
-                subprocess.Popen(['start',opath])
+                os.startfile(f"{opath}")
+                #subprocess.Popen(['start',opath])
             elif self.PROGRAM_OS=='mac':
                 subprocess.Popen(['open',opath])
             else:
@@ -702,7 +706,8 @@ class GUI():
                 if self.PROGRAM_OS == 'unix':
                     subprocess.Popen(['pcmanfm',f"{self.pwd}/"])
                 elif self.PROGRAM_OS == 'win':
-                    subprocess.Popen(['start',f"{self.pwd}/"])
+                    os.startfile(f"{self.pwd}")
+                    #subprocess.Popen(['start',f"{self.pwd}/"])
                 elif self.PROGRAM_OS=='mac':
                     subprocess.Popen(['open',f"{self.pwd}/"])
                 else:
@@ -725,7 +730,10 @@ class GUI():
         if os.path.exists("server.py"):
             print("----- Initialising Server -----")
             try:
-                self.server = subprocess.Popen(["python3", "server.py"])
+                if self.PROGRAM_OS == 'win':
+                    self.server = subprocess.Popen(["python", "server.py"])
+                else:
+                    self.server = subprocess.Popen(["python3", "server.py"])
                 self.PROGRAM_STATUS.set(f"Command: START WEBSERVER \nSTATUS: Server: {self.server.pid} ID is running.")
                 self.webserver_isAlive = True
             except Exception as e:
