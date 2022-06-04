@@ -334,16 +334,24 @@ class GUI():
         else:
             raise EnvironmentError('Unsupported platform')
 
-        result = ['Demo'] # Remove this in production software
+        result = [] # Remove this in production software
         
-        for eachPort in ports:
-            if 'usb' in eachPort.lower():
-                print("Valid-Port: ",eachPort.lower())
-                try:
-                    serial.Serial(eachPort).close()
-                    result.append(eachPort)
-                except (OSError, serial.SerialException):
-                    pass
+        if self.PROGRAM_OS == 'win':
+            for eachPort in ports:
+                if 'com' in eachPort.lower():
+                    try:
+                        serial.Serial(eachPort).close()
+                        result.append(eachPort)
+                    except (OSError, serial.SerialException):
+                        pass
+        else:
+            for eachPort in ports:
+                if 'usb' in eachPort.lower():
+                    try:
+                        serial.Serial(eachPort).close()
+                        result.append(eachPort)
+                    except (OSError, serial.SerialException):
+                        pass
         if result:
 
             s = ["SENSOR PORT"] + result
@@ -561,20 +569,31 @@ class GUI():
                     outfile.close()
             
             try:
-                    sensor = serial.Serial(
+                if self.DUALEM_PORT.get() != self.GPS_PORT.get():
+                        sensor = serial.Serial(
                             port=self.DUALEM_PORT.get(),
                             baudrate=int(self.DUALEM_BAUD.get()),
                             timeout=int(self.DUALEM_FREQ.get()),
                             parity=serial.PARITY_NONE,
                             bytesize=serial.EIGHTBITS,
                             stopbits=serial.STOPBITS_ONE)
-                    gps = serial.Serial(
+                        gps = serial.Serial(
                             port=self.GPS_PORT.get(),
                             baudrate=int(self.GPS_BAUD.get()),
                             timeout=int(self.GPS_FREQ.get()),
                             parity=serial.PARITY_NONE,
                             bytesize=serial.EIGHTBITS,
                             stopbits=serial.STOPBITS_ONE)
+                else:
+                        sensor = serial.Serial(
+                            port=self.DUALEM_PORT.get(),
+                            baudrate=int(self.DUALEM_BAUD.get()),
+                            timeout=int(self.DUALEM_FREQ.get()),
+                            parity=serial.PARITY_NONE,
+                            bytesize=serial.EIGHTBITS,
+                            stopbits=serial.STOPBITS_ONE)
+                        gps = sensor
+
             except Exception as e:
                     print(e)
                     return False
@@ -584,24 +603,31 @@ class GUI():
                     outputlist = []
                     try:
                         temp=""
-                        
+                        validSensor = False
+                        validGps = False
                         sensor_obj = pynmea2.parse(sensor.readline().decode('ascii', errors='replace').strip())
+                        if sensor_obj:
+                            validSensor = True
+
                         gps_line = gps.readline().decode('ascii', errors='replace').strip()
+                        
                         if gps_line.split(",")[0] in ['$GPGLL']:
-                            gps_obj = pynmea2.parse(gps_line)
-                            temp += f"{gps_obj.latitude},{gps_obj.longitude}"
-                            lats.append(gps_obj.latitude)
-                            longs.append(gps_obj.longitude)
-                            with open(self.project_path_json, 'w') as outputfile:
-                                data = [ list(points) for points in zip(lats,longs)]
-                                geojson = json.dumps({
-                                        'LatLongs': data ,
-                                        'live': [lats[-1],longs[-1]]
-                                        }, indent = 4)
-                                outputfile.write(geojson)
-                                outputfile.close()
+                                gps_obj = pynmea2.parse(gps_line)
+                                validGps = True
+                                temp += f"{gps_obj.latitude},{gps_obj.longitude}"
+                                lats.append(gps_obj.latitude)
+                                longs.append(gps_obj.longitude)
+                                with open(self.project_path_json, 'w') as outputfile:
+                                    data = [ list(points) for points in zip(lats,longs)]
+                                    geojson = json.dumps({
+                                            'LatLongs': data ,
+                                            'live': [lats[-1],longs[-1]]
+                                            }, indent = 4)
+                                    outputfile.write(geojson)
+                                    outputfile.close()
                         else:
-                            temp += f"{0},{0}"                 
+                            temp += f"{0},{0}"                
+                        
                         for field in sensor_obj.data:
                             temp+= f",{field}"
                         
@@ -609,13 +635,18 @@ class GUI():
                             outfile.write(f"{temp}\n")
                             outfile.close
                         if self.PROGRAM_STATUS_OP:
-                            self.PROGRAM_STATUS.set(f"Command: Live Output\nSensor-Data:{sensor_obj.data}\nGPS-Data: {gps_obj.latitude},{gps_obj.longitude}")
+                            if validSensor and validGps:
+                                self.PROGRAM_STATUS.set(f"Command: Live Output\nSensor-Data:{sensor_obj.data}\nGPS-Data: {gps_obj.latitude},{gps_obj.longitude}")
+                            if validSensor and not validGps:
+                                self.PROGRAM_STATUS.set(f"Command: Live Output\nSensor-Data:{sensor_obj.data}")
+
                         else:
                             self.PROGRAM_STATUS.set(f"Command: Disable Live Output\nData: --- ")
 
                         print(temp)
                         time.sleep(0.125)
                     except Exception as e:
+                            print(e)
                             self.PROGRAM_STATUS.set(f"ERROR: CHECK PORTS!")
                             continue
             if not self.threadFlag:
